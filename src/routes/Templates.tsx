@@ -77,7 +77,7 @@ const Templates = () => {
           placeholder="Enter environment name..."
           style={{ display: 'block' }}
           type="search"
-          value={search ? search : undefined}
+          value={search}
           onChange={e => setSearch(e.target.value)}
         />
         <select
