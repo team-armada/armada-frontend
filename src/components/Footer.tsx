@@ -7,7 +7,7 @@ const Footer = () => {
     return year;
   };
 
-  const [year, setYear] = useState(getCurrentYear);
+  const [year] = useState(getCurrentYear);
 
   return <footer>&copy;{` ${year} Armada Team`}</footer>;
 };
