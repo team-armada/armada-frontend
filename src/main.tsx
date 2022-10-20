@@ -7,7 +7,10 @@ import Error from './routes/Error';
 import Users from './routes/Users';
 import Images from './routes/Images';
 import Settings from './routes/Settings';
+import './reset.css';
 import './index.css';
+import Cohorts from './routes/Cohorts';
+import Templates from './routes/Templates';
 
 const router = createBrowserRouter([
   {
@@ -21,8 +24,18 @@ const router = createBrowserRouter([
         errorElement: <Error />,
       },
       {
+        path: '/templates',
+        element: <Templates />,
+        errorElement: <Error />,
+      },
+      {
         path: '/images',
         element: <Images />,
+        errorElement: <Error />,
+      },
+      {
+        path: '/cohorts',
+        element: <Cohorts />,
         errorElement: <Error />,
       },
       {
