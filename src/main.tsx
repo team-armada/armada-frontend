@@ -11,6 +11,7 @@ import './reset.css';
 import './index.css';
 import Cohorts from './routes/Cohorts';
 import Templates from './routes/Templates';
+import NewTemplate from './routes/newTemplate';
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,11 @@ const router = createBrowserRouter([
       {
         path: '/templates',
         element: <Templates />,
+        errorElement: <Error />,
+      },
+      {
+        path: '/templates/create-template',
+        element: <NewTemplate />,
         errorElement: <Error />,
       },
       {
