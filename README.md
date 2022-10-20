@@ -1,2 +1,2 @@
-# Armada Architecture 
+# Armada Frontend 
 
