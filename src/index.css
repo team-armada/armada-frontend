@@ -30,6 +30,8 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  justify-content: center;
+  align-content: top;
 }
 
 h1 {
@@ -67,4 +69,17 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+.navigation {
+  display: flex;
+  justify-content: left;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.navigation-link {
+  list-style: none;
+  padding-left: 5rem;
+  padding-right: 5rem;
 }
