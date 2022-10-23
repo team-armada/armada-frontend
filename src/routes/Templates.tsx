@@ -1,19 +1,16 @@
 import { useState } from 'react';
 import { Link, useLoaderData } from 'react-router-dom';
+import { deleteWorkspaceTemplate } from '../services/templateService';
 
 const Templates = () => {
   const data = useLoaderData();
   const [search, setSearch] = useState('');
   const [optionsState, setOptionsState] = useState('');
-  const [templates] = useState<ITemplate[]>(data);
+  const [templates] = useState<string[]>(data);
 
   interface value {
     value: string;
     text: string;
-  }
-
-  interface ITemplate {
-    taskDefinitionArn: string;
   }
 
   const values: value[] = [
@@ -56,10 +53,13 @@ const Templates = () => {
         </select>
       </section>
       <section style={{ display: 'flex' }}>
-        {templates.map((template: ITemplate) => {
+        {templates.map((template: string) => {
           return (
             <div key={template} style={{ border: 'solid white 1px' }}>
               <p>{template}</p>
+              <button onClick={() => deleteWorkspaceTemplate(template)}>
+                Delete Me
+              </button>
             </div>
           );
         })}
