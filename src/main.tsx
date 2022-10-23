@@ -1,5 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import './reset.css';
+import './index.css';
+
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Root from './routes/Root';
 import Home from './routes/Home';
@@ -7,11 +10,10 @@ import Error from './routes/Error';
 import Users from './routes/Users';
 import Images from './routes/Images';
 import Settings from './routes/Settings';
-import './reset.css';
-import './index.css';
 import Cohorts from './routes/Cohorts';
 import Templates from './routes/Templates';
-import NewTemplate from './routes/newTemplate';
+import NewTemplate from './routes/NewTemplate';
+import { getWorkspaceTemplates } from './services/templateService';
 
 const router = createBrowserRouter([
   {
@@ -28,6 +30,10 @@ const router = createBrowserRouter([
         path: '/templates',
         element: <Templates />,
         errorElement: <Error />,
+        loader: async () => {
+          const data = await getWorkspaceTemplates();
+          return data.result.taskDefinitionArns;
+        },
       },
       {
         path: '/templates/create-template',

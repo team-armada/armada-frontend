@@ -1,5 +1,28 @@
 import { useState } from 'react';
 import { Form } from 'react-router-dom';
+import {
+  IContainerDefinition,
+  createWorkspaceTemplate,
+} from '../services/templateService';
+
+const containerDefinition: IContainerDefinition = {
+  containerDefinition: [
+    {
+      name: 'exampleContainer',
+      image: 'jdguillaume/base-code-server-no-auth',
+      memory: 512,
+      portMappings: [
+        {
+          containerPort: 8080,
+          hostPort: 8080,
+          protocol: 'tcp',
+        },
+      ],
+    },
+  ],
+};
+
+const family = 'frontend-call';
 
 const NewTemplate = () => {
   const [name, setName] = useState('');
@@ -14,7 +37,12 @@ const NewTemplate = () => {
         onChange={e => setName(e.target.value)}
       />
       <input />
-      <button style={{ backgroundColor: 'indigo' }}>Create Template</button>
+      <button
+        style={{ backgroundColor: 'indigo' }}
+        onClick={() => createWorkspaceTemplate(containerDefinition, family)}
+      >
+        Create Template
+      </button>
     </Form>
   );
 };
