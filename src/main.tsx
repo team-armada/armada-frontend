@@ -1,9 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+
 import './reset.css';
 import './index.css';
 
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { getWorkspaceTemplates } from './services/templateService';
+import { getAllWorkspaces } from './services/workspaceService';
 import Root from './routes/Root';
 import Home from './routes/Home';
 import Error from './routes/Error';
@@ -13,7 +16,7 @@ import Settings from './routes/Settings';
 import Cohorts from './routes/Cohorts';
 import Templates from './routes/Templates';
 import NewTemplate from './routes/NewTemplate';
-import { getWorkspaceTemplates } from './services/templateService';
+import Workspaces from './routes/Workspaces';
 
 const router = createBrowserRouter([
   {
@@ -33,6 +36,15 @@ const router = createBrowserRouter([
         loader: async () => {
           const data = await getWorkspaceTemplates();
           return data.result.taskDefinitionArns;
+        },
+      },
+      {
+        path: '/workspaces',
+        element: <Workspaces />,
+        errorElement: <Error />,
+        loader: async (): Promise<string[]> => {
+          const data = await getAllWorkspaces();
+          return data;
         },
       },
       {

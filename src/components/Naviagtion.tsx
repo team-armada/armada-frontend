@@ -14,6 +14,9 @@ const Navigation = () => {
           <Link to="/templates" className="navigation-link">
             Templates
           </Link>
+          <Link to="/workspaces" className="navigation-link">
+            Workspaces
+          </Link>
           <Link to="/cohorts" className="navigation-link">
             Cohorts
           </Link>

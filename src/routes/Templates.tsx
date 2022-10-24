@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLoaderData } from 'react-router-dom';
 import { deleteWorkspaceTemplate } from '../services/templateService';
+import { runWorkspace } from '../services/workspaceService';
 
 const Templates = () => {
   const data = useLoaderData();
@@ -57,6 +58,9 @@ const Templates = () => {
           return (
             <div key={template} style={{ border: 'solid white 1px' }}>
               <p>{template}</p>
+              <button onClick={() => runWorkspace(template)}>
+                Create Workspace
+              </button>
               <button onClick={() => deleteWorkspaceTemplate(template)}>
                 Delete Me
               </button>

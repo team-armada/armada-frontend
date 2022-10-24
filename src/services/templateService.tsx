@@ -7,15 +7,11 @@ export interface PortSettings {
   protocol: string;
 }
 
-export interface ContainerSettings {
+export interface IContainerSettings {
   name: string;
   image: string;
   memory: number;
   portMappings: PortSettings[];
-}
-
-export interface IContainerDefinition {
-  containerDefinition: ContainerSettings[];
 }
 
 // Retrieve all templates
@@ -32,7 +28,7 @@ export const getWorkspaceTemplates = async () => {
 
 // Create a template.
 export const createWorkspaceTemplate = async (
-  containerDefinition: IContainerDefinition,
+  containerDefinition: IContainerSettings[],
   family: string
 ) => {
   try {
@@ -54,7 +50,7 @@ export const createWorkspaceTemplate = async (
 export const deleteWorkspaceTemplate = async (taskDefinitionArn: string) => {
   try {
     console.log(typeof taskDefinitionArn);
-    const response = await axios.delete(`${BASE_URL}/workspaces`, {
+    const response = await axios.delete(`${BASE_URL}/templates`, {
       data: {
         taskDefinitionArn,
       },

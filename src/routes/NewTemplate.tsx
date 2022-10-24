@@ -1,26 +1,24 @@
 import { useState } from 'react';
 import { Form } from 'react-router-dom';
 import {
-  IContainerDefinition,
+  IContainerSettings,
   createWorkspaceTemplate,
 } from '../services/templateService';
 
-const containerDefinition: IContainerDefinition = {
-  containerDefinition: [
-    {
-      name: 'exampleContainer',
-      image: 'jdguillaume/base-code-server-no-auth',
-      memory: 512,
-      portMappings: [
-        {
-          containerPort: 8080,
-          hostPort: 8080,
-          protocol: 'tcp',
-        },
-      ],
-    },
-  ],
-};
+const containerDefinition: IContainerSettings[] = [
+  {
+    name: 'exampleContainer',
+    image: 'jdguillaume/base-code-server-no-auth',
+    memory: 512,
+    portMappings: [
+      {
+        containerPort: 8080,
+        hostPort: 8080,
+        protocol: 'tcp',
+      },
+    ],
+  },
+];
 
 const family = 'frontend-call';
 
