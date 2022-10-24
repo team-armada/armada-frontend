@@ -1,22 +1,17 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useLoaderData } from 'react-router-dom';
+import { deleteWorkspaceTemplate } from '../services/templateService';
+import { runWorkspace } from '../services/workspaceService';
 
 const Templates = () => {
+  const data = useLoaderData();
   const [search, setSearch] = useState('');
   const [optionsState, setOptionsState] = useState('');
-  const [templates, setTemplates] = useState([]);
+  const [templates] = useState<string[]>(data);
 
   interface value {
     value: string;
     text: string;
-  }
-
-  interface template {
-    name: string;
-    environment: string;
-    version: string;
-    dateCreated: string;
-    id: number;
   }
 
   const values: value[] = [
@@ -25,41 +20,6 @@ const Templates = () => {
     { value: 'name-asc', text: 'Name (Asc)' },
     { value: 'name-desc', text: 'Name (Desc)' },
   ];
-
-  const dummyTemplates: template[] = [
-    {
-      name: 'JS109 Intro to JavaScript',
-      environment: 'Coder',
-      version: '1.2.1',
-      dateCreated: 'Oct 20th, 2022',
-      id: 1,
-    },
-    {
-      name: 'JS120 Intermediate JavaScript',
-      environment: 'Coder',
-      version: '1.2.1',
-      dateCreated: 'Oct 20th, 2022',
-      id: 2,
-    },
-    {
-      name: 'JS130 Advanced JavaScript',
-      environment: 'Coder',
-      version: '1.2.1',
-      dateCreated: 'Oct 20th, 2022',
-      id: 3,
-    },
-    {
-      name: 'LS180 Intro to Databases',
-      environment: 'Coder',
-      version: '1.2.1',
-      dateCreated: 'Oct 20th, 2022',
-      id: 4,
-    },
-  ];
-
-  useEffect(() => {
-    setTemplates(dummyTemplates);
-  }, []);
 
   return (
     <>
@@ -94,13 +54,16 @@ const Templates = () => {
         </select>
       </section>
       <section style={{ display: 'flex' }}>
-        {templates.map((template: template) => {
+        {templates.map((template: string) => {
           return (
-            <div key={template.id} style={{ border: 'solid white 1px' }}>
-              <p>{template.name}</p>
-              <p>{template.environment}</p>
-              <p>version {template.version}</p>
-              <p>{template.dateCreated}</p>
+            <div key={template} style={{ border: 'solid white 1px' }}>
+              <p>{template}</p>
+              <button onClick={() => runWorkspace(template)}>
+                Create Workspace
+              </button>
+              <button onClick={() => deleteWorkspaceTemplate(template)}>
+                Delete Me
+              </button>
             </div>
           );
         })}
