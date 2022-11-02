@@ -4,7 +4,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ChakraProvider } from '@chakra-ui/react'
 
 import './reset.css';
-// import './index.css';
 
 import { getBaseTemplates } from './services/templateService';
 import { getAllServices } from './services/studentService';
@@ -13,14 +12,14 @@ import { getAllWorkspaces } from './services/workspaceService';
 import Root from './routes/Root';
 import Home from './routes/Home';
 import Error from './routes/Error';
-import Users from './routes/Users';
-import Images from './routes/Images';
-import Settings from './routes/Settings';
+import Cohort from './routes/Cohort';
 import Cohorts from './routes/Cohorts';
+import Courses from './routes/Courses'
 import Templates from './routes/Templates';
-import NewTemplate from './routes/NewTemplate';
 import Workspaces from './routes/Workspaces';
 import Course from './routes/Course';
+import Student from './routes/Student'
+import Students from './routes/Students'
 
 const router = createBrowserRouter([
   {
@@ -34,15 +33,6 @@ const router = createBrowserRouter([
         errorElement: <Error />,
       },
       {
-        path: '/templates',
-        element: <Templates />,
-        errorElement: <Error />,
-        loader: async () => {
-          const data = await getBaseTemplates();
-          return data;
-        },
-      },
-      {
         path: '/workspaces',
         element: <Workspaces />,
         errorElement: <Error />,
@@ -52,17 +42,26 @@ const router = createBrowserRouter([
         },
       },
       {
-        path: '/course',
-        element: <Course />,
-        errorElement: <Error />,
-        // loader: async () => {
-        //   const data = await getBaseTemplates();
-        //   return data;
-        // },
-      },
-      {
         path: '/cohorts',
         element: <Cohorts />,
+        errorElement: <Error />,
+        loader: async (): Promise<string[]> => {
+          const data = await getAllServices();
+          return data.result.serviceArns;
+        },
+      },
+      {
+        path: '/cohorts/:cohortId',
+        element: <Cohort />,
+        errorElement: <Error />,
+        loader: async (): Promise<string[]> => {
+          const data = await getAllServices();
+          return data.result.serviceArns;
+        },
+      },
+      {
+        path: '/cohorts/:cohortId/courses/:courseId',
+        element: <Course />,
         errorElement: <Error />,
         loader: async () => {
           const data = await getAllServices();
@@ -70,14 +69,31 @@ const router = createBrowserRouter([
         },
       },
       {
-        path: '/users',
-        element: <Users />,
+        path: '/courses',
+        element: <Courses />,
         errorElement: <Error />,
+        loader: async () => {
+          const data = await getAllServices();
+          return data.result.serviceArns;
+        },
       },
       {
-        path: '/settings',
-        element: <Settings />,
+        path: '/students',
+        element: <Students />,
         errorElement: <Error />,
+        loader: async () => {
+          const data = await getAllServices();
+          return data.result.serviceArns;
+        },
+      },
+      {
+        path: '/students/:student',
+        element: <Student />,
+        errorElement: <Error />,
+        loader: async () => {
+          const data = await getAllServices();
+          return data.result.serviceArns;
+        },
       },
     ],
   },

@@ -64,7 +64,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Workspaces', icon: AiOutlineDesktop, destination: '/workspaces' },
   { name: 'Cohorts', icon: HiOutlineUserGroup, destination: '/cohorts' },
   { name: 'Courses', icon: GiBookshelf, destination: '/courses'},
-  { name: 'Users', icon: FiUsers, destination: '/students' },
+  { name: 'Students', icon: FiUsers, destination: '/students' },
 ];
 
 export default function SidebarWithHeader({
