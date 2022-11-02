@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { ChakraProvider } from '@chakra-ui/react'
 
 import './reset.css';
-import './index.css';
+// import './index.css';
 
-import { getWorkspaceTemplates } from './services/templateService';
+import { getBaseTemplates } from './services/templateService';
+import { getAllServices } from './services/studentService';
 import { getAllWorkspaces } from './services/workspaceService';
+
 import Root from './routes/Root';
 import Home from './routes/Home';
 import Error from './routes/Error';
@@ -17,6 +20,7 @@ import Cohorts from './routes/Cohorts';
 import Templates from './routes/Templates';
 import NewTemplate from './routes/NewTemplate';
 import Workspaces from './routes/Workspaces';
+import Course from './routes/Course';
 
 const router = createBrowserRouter([
   {
@@ -34,33 +38,36 @@ const router = createBrowserRouter([
         element: <Templates />,
         errorElement: <Error />,
         loader: async () => {
-          const data = await getWorkspaceTemplates();
-          return data.result.taskDefinitionArns;
+          const data = await getBaseTemplates();
+          return data;
         },
       },
       {
         path: '/workspaces',
         element: <Workspaces />,
         errorElement: <Error />,
-        loader: async (): Promise<string[]> => {
-          const data = await getAllWorkspaces();
+        loader: async () => {
+          const data = await getBaseTemplates();
           return data;
         },
       },
       {
-        path: '/templates/create-template',
-        element: <NewTemplate />,
+        path: '/course',
+        element: <Course />,
         errorElement: <Error />,
-      },
-      {
-        path: '/images',
-        element: <Images />,
-        errorElement: <Error />,
+        // loader: async () => {
+        //   const data = await getBaseTemplates();
+        //   return data;
+        // },
       },
       {
         path: '/cohorts',
         element: <Cohorts />,
         errorElement: <Error />,
+        loader: async () => {
+          const data = await getAllServices();
+          return data.result.serviceArns;
+        },
       },
       {
         path: '/users',
@@ -78,6 +85,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ChakraProvider>
+      <RouterProvider router={router} />
+    </ChakraProvider>
   </React.StrictMode>
 );

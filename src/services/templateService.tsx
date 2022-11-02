@@ -12,6 +12,43 @@ export interface IContainerSettings {
   image: string;
   memory: number;
   portMappings: PortSettings[];
+  mountPoints: IMountSettings[];
+}
+
+export interface IMountSettings {
+  containerPath: string;
+  sourceVolume: string;
+}
+
+export interface IContainerDefinition {
+  containerDefinition: IContainerSettings[];
+  family?: string;
+  volumes?: IVolumes[];
+  template?: string;
+}
+export interface IVolumes {
+  efsVolumeConfiguration: {
+    fileSystemId: string;
+    rootDirectory: string;
+  };
+  name: string;
+}
+
+export interface IBaseTemplate {
+  definition: IContainerDefinition;
+  name: string
+}
+
+// Get base templates.
+export const getBaseTemplates = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/templates/base`);
+    return response.data.baseTemplates;
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.log(err.message);
+    }
+  }
 }
 
 // Retrieve all templates

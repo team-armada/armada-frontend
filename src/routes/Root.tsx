@@ -1,13 +1,11 @@
 import { Outlet } from 'react-router-dom';
 import Footer from '../components/Footer';
-import Navigation from '../components/Naviagtion';
+import SidebarWithHeader from '../components/Naviagtion';
 
 const Root = () => {
   return (
     <>
-      <Navigation />
-      <Outlet />
-      <Footer />
+      <SidebarWithHeader children={<Outlet />}/>
     </>
   );
 };

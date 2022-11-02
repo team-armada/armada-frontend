@@ -74,7 +74,6 @@ export const createStudentService = async (
   studentName: string,
   cohort: string,
   course: string,
-  version: number,
   template: string //codeServerOnly or coderServerPG
   //TODO: check if there is a version for this task def, if not, default to 1, else increase by 1
 ) => {
@@ -84,7 +83,7 @@ export const createStudentService = async (
         studentName,
         cohort,
         course,
-        version,
+        template
       },
     });
     return response.data;
