@@ -17,6 +17,8 @@ import {
     cohort: string;
     course: string;
     student: string;
+    desiredCount?: number;
+    name?: string;
   }
 
   // Extracting the relevant data from the ARN.
@@ -72,15 +74,17 @@ const Cohorts = () => {
       <TableContainer>
       <Table>
         <Thead>
-          <Th>Cohort Name</Th>
-          <Th>Cohort Status</Th>
+          <Tr>
+            <Th>Cohort Name</Th>
+            <Th>Cohort Status</Th>
+          </Tr>
         </Thead>
         <Tbody>
             {cohorts.map(cohort => {
               return (
-                <Tr>
-                <Td onClick={(e) => navigate(`/cohorts/${cohort}`)}>{cohort}</Td>
-                <Td>Active</Td>
+                <Tr key={cohort}>
+                  <Td onClick={(e) => navigate(`/cohorts/${cohort}`)}>{cohort}</Td>
+                  <Td>Active</Td>
                 </Tr>
               )
             })}

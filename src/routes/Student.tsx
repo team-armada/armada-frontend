@@ -42,15 +42,17 @@ const Student = () => {
       </Center>
     <Table>
       <Thead>
-        <Th>Course Name</Th>
-        <Th>Cohort</Th>
+        <Tr>
+          <Th>Course Name</Th>
+          <Th>Cohort</Th>
+        </Tr>
       </Thead>
       <Tbody>
           {courses.map(course => {
             return (
-              <Tr>
-              <Td onClick={(e) => navigate(`/cohorts/${course.cohort}/courses/${course.course}`)}>{course.course}</Td>
-              <Td onClick={(e) => navigate(`/cohorts/${course.cohort}`)}>{course.cohort}</Td>
+              <Tr key={`${course.cohort}-${course.course}`}>
+                <Td onClick={(e) => navigate(`/cohorts/${course.cohort}/courses/${course.course}`)}>{course.course}</Td>
+                <Td onClick={(e) => navigate(`/cohorts/${course.cohort}`)}>{course.cohort}</Td>
               </Tr>
             )
           })}
@@ -64,15 +66,17 @@ const Student = () => {
       </Center>
     <Table>
       <Thead>
-        <Th>Cohort Name</Th>
-        <Th>Cohort Status</Th>
+        <Tr>
+          <Th>Cohort Name</Th>
+          <Th>Cohort Status</Th>
+        </Tr>
       </Thead>
       <Tbody>
           {cohorts.map(cohort => {
             return (
-              <Tr>
-              <Td onClick={(e) => navigate(`/cohorts/${cohort}`)}>{cohort}</Td>
-              <Td>Active</Td>
+              <Tr key={cohort}>
+                <Td onClick={(e) => navigate(`/cohorts/${cohort}`)}>{cohort}</Td>
+                <Td>Active</Td>
               </Tr>
             )
           })}

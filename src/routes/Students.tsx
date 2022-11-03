@@ -1,7 +1,7 @@
 import { useLoaderData, useNavigate } from "react-router-dom";
 
-import { 
-  Heading,   
+import {
+  Heading,
   Table,
   Thead,
   Tbody,
@@ -28,15 +28,17 @@ const Students = () => {
     <TableContainer>
     <Table>
       <Thead>
-        <Th>Student Name</Th>
-        <Th>More info?</Th> 
+        <Tr>
+          <Th>Student Name</Th>
+          <Th>More info?</Th>
+        </Tr>
       </Thead>
       <Tbody>
           {students.map(student => {
             return (
-              <Tr>
-              <Td onClick={(e) => navigate(`/students/${student}`)}>{student}</Td>
-              <Td>Active</Td>
+              <Tr key={student}>
+                <Td onClick={(e) => navigate(`/students/${student}`)}>{student}</Td>
+                <Td>Active</Td>
               </Tr>
             )
           })}

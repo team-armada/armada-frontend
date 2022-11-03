@@ -69,6 +69,17 @@ export const getAllServices = async () => {
   }
 };
 
+export const describeService = async (service:string) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/service/${service}`);
+    return response.data.result.services[0].desiredCount
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.log(err.message);
+    }
+  }
+};
+
 // Create a service.
 export const createStudentService = async (
   studentNames: string[],
@@ -104,7 +115,8 @@ export const deleteService = async (service: string) => {
         service,
       },
     });
-
+    
+    console.log(response.data)
     return response.data;
   } catch (err: unknown) {
     if (err instanceof Error) {

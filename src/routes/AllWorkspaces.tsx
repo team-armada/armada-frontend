@@ -1,7 +1,7 @@
 import { useLoaderData, useNavigate } from "react-router-dom";
 import {useEffect, useState} from 'react'
-import { extractRelevantData, ICohort } from "./Cohorts";
-import { deleteService, startService, stopService } from "../services/studentService";
+import { ICohort } from "./Cohorts";
+import { deleteService, describeService, startService, stopService } from "../services/studentService";
 
 import {
   Flex,
@@ -22,10 +22,9 @@ import {
 const AllWorkspaces = () => {
   const data = useLoaderData();
   const navigate = useNavigate();
-  const [filteredData, setFilteredData] = useState<ICohort[]>(extractRelevantData(data))
+  const [filteredData, setFilteredData] = useState<ICohort[]>(data)
   const [filter, setFilter] = useState<string>('student-asc')
   const [search, setSearch] = useState('')
-
 
   function updateData(filter: string){
     if (filter !== 'student-asc' && filter !== 'cohort-asc' && filter !== 'course-asc' && filter !== 'student-desc' && filter !== 'cohort-desc' && filter !== 'course-desc'){
@@ -40,7 +39,7 @@ const AllWorkspaces = () => {
 
   function filterBy(searchText: string) {
 
-    const baseData = extractRelevantData(data);
+    const baseData = data;
   
     searchText = searchText.toLowerCase();
 
@@ -55,12 +54,10 @@ const AllWorkspaces = () => {
       sortBy(searchResults, filter)
       setFilteredData(searchResults);
     }
-
-    console.log(searchResults);
   }
 
   useEffect(() => {
-    const workspaces = extractRelevantData(data)
+    const workspaces = data
     updateData(filter)
   }, [])
 
@@ -106,27 +103,28 @@ const AllWorkspaces = () => {
     })
   }
 
+
   const start = async (name: string) => {
     await startService(name)
-    navigate('')
+    navigate('/workspaces/all')
   }
 
   const stop = async (name: string) => {
     await stopService(name)
-    navigate('')
+    navigate('/workspaces/all')
   }
 
   const remove = async (name: string) => {
     await deleteService(name)
-    navigate('')
+    navigate('/workspaces/all')
   }
   
   return (
     <>
       <Heading mb={"20px"}>All Workspaces</Heading>
-      <Flex  justifyContent={"right"} mb={"20px"}>
-        <Select mr={"10px"} onChange={(e) => updateData(e.target.value)} w={"20%"} >
-          <option value='student-asc' selected>Sort: Student Name (ASC)</option>
+      <Flex  justifyContent={"right"} mb={"20px"} >
+        <Select mr={"10px"} onChange={(e) => updateData(e.target.value)} w={"20%"} placeholder={'Click here to sort...'}>
+          <option value='student-asc' defaultValue={'student-asc'} >Sort: Student Name (ASC)</option>
           <option value='student-desc'>Sort: Student Name (DESC)</option>
           <option value='course-asc'>Sort: Course (ASC)</option>
           <option value='course-desc'>Sort: Course (DESC)</option>
@@ -139,24 +137,27 @@ const AllWorkspaces = () => {
       <TableContainer>
       <Table>
         <Thead>
-          <Th>Student Name</Th>
-          <Th>Cohort</Th>
-          <Th>Course</Th>
-          <Th>Actions</Th>
+          <Tr>
+            <Th>Student Name</Th>
+            <Th>Cohort</Th>
+            <Th>Course</Th>
+            <Th>Actions</Th>
+          </Tr>
         </Thead>
         <Tbody>
             {filteredData.map(workspace => {
               const name = `${workspace.cohort}-${workspace.course}-${workspace.student}`
 
               return (
-                <Tr>
+                <Tr key={name}>
                 <Td>{workspace.student }</Td>
                 <Td>{workspace.cohort}</Td>
                 <Td>{workspace.course}</Td>
                 <Td>
-                  <Button colorScheme='facebook' mr={"10px"} onClick={() => start(name)}>Start</Button>
-                  <Button colorScheme='telegram' mr={"10px"} onClick={() => stop(name)}>Stop</Button>
-                  <Button colorScheme='red' mr={"10px"} onClick={() => remove(name)}>Delete</Button>
+                  <Button colorScheme='facebook' mr={"10px"} disabled={workspace.desiredCount === 1} onClick={() => start(name)}>Start</Button>
+                  <Button colorScheme='telegram' mr={"10px"} disabled={workspace.desiredCount === 0} onClick={() => stop(name)}>Stop</Button>
+                  <Button colorScheme='red' mr={"10px"} disabled={workspace.desiredCount === 1} onClick={() => remove(name)}>Delete</Button>
+                  <Button colorScheme='green' >Preview</Button>
                   </Td>
                 </Tr>
               )

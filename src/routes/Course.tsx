@@ -33,15 +33,17 @@ const Course = () => {
   <TableContainer>
   <Table>
     <Thead>
-      <Th>Student Name</Th>
-      <Th>Workspace Status</Th>
+      <Tr>
+        <Th>Student Name</Th>
+        <Th>Workspace Status</Th>
+      </Tr>
     </Thead>
     <Tbody>
     {students.map(student => {
             return (
-              <Tr>
-              <Td onClick={(e) => navigate(`/students/${student}`)}>{student}</Td>
-              <Td>Active</Td>
+              <Tr key={student}>
+                <Td onClick={(e) => navigate(`/students/${student}`)}>{student}</Td>
+                <Td>Active</Td>
               </Tr>
             )
           })}

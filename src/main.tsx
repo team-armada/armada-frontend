@@ -6,14 +6,14 @@ import { ChakraProvider } from '@chakra-ui/react'
 import './reset.css';
 
 import { getBaseTemplates } from './services/templateService';
-import { getAllServices } from './services/studentService';
+import { describeService, getAllServices } from './services/studentService';
 import { getAllWorkspaces } from './services/workspaceService';
 
 import Root from './routes/Root';
 import Home from './routes/Home';
 import Error from './routes/Error';
 import Cohort from './routes/Cohort';
-import Cohorts from './routes/Cohorts';
+import Cohorts, { extractRelevantData } from './routes/Cohorts';
 import Courses from './routes/Courses'
 import Templates from './routes/Templates';
 import NewWorkspace from './routes/NewWorkspace';
@@ -22,6 +22,7 @@ import Student from './routes/Student'
 import Students from './routes/Students'
 import WorkspacesHome from './routes/WorkspacesHome';
 import AllWorkspaces from './routes/AllWorkspaces';
+import Login from './routes/Login';
 
 const router = createBrowserRouter([
   {
@@ -44,8 +45,27 @@ const router = createBrowserRouter([
         element: <AllWorkspaces />,
         errorElement: <Error />,
         loader: async (): Promise<string[]> => {
-          const data = await getAllServices();
-          return data.result.serviceArns;
+          let data = await getAllServices();
+          data = data.result.serviceArns;
+          data = extractRelevantData(data)
+
+          const promises = [];
+
+          for (let count = 0; count < data.length; count++){
+            const current = data[count]
+            const name = `${current.cohort}-${current.course}-${current.student}`
+            data[count].name = name;
+
+            promises.push(describeService(name))
+          }
+
+          const counts = await Promise.all(promises);
+
+          for (let countsCount = 0; countsCount < data.length; countsCount++){
+            data[countsCount].desiredCount = counts[countsCount]
+          }
+
+          return data
         },
       },
       {
@@ -112,6 +132,11 @@ const router = createBrowserRouter([
         },
       },
     ],
+  },
+  {
+        path: '/login',
+        element: <Login />,
+        errorElement: <Error />
   },
 ]);
 

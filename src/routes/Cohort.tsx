@@ -24,15 +24,17 @@ const Cohort = () => {
     <TableContainer>
     <Table>
       <Thead>
-        <Th>Course Name</Th>
-        <Th>Course Status</Th>
+        <Tr>
+          <Th>Course Name</Th>
+          <Th>Course Status</Th>
+        </Tr>
       </Thead>
       <Tbody>
           {courses.map(course => {
             return (
-              <Tr>
-              <Td onClick={(e) => navigate(`courses/${course}`)}>{course}</Td>
-              <Td>Active</Td>
+              <Tr key={course}>
+                <Td onClick={(e) => navigate(`courses/${course}`)}>{course}</Td>
+                <Td>Active</Td>
               </Tr>
             )
           })}
