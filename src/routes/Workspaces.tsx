@@ -3,6 +3,7 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import { FormControl, FormLabel, Input, Button, Textarea, RadioGroup, Radio, Heading, Stack } from '@chakra-ui/react';
 import { BASE_URL } from '../utils/constants';
 import { createStudentService } from '../services/studentService';
+import { makeSentenceCase } from '../utils/stringManipulation';
 
 const Workspaces = () => {
   const navigate = useNavigate()
@@ -12,17 +13,17 @@ const Workspaces = () => {
   const [radioValue, setRadioValue] = useState('codeServerOnly')
   const [studentNames, setStudentNames] = useState('')
 
-  const createWorkspace = (e: React.FormEvent<HTMLFormElement>) => {
+  const createWorkspace = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Course Name:', courseName)
-    console.log('Cohort Name:', cohortName)
-    console.log('Radio Value:', radioValue)
-    console.log('Student Names:', studentNames)
 
-    createStudentService(studentNames, cohortName, courseName, radioValue);
+    const lowerCohortName = makeSentenceCase(cohortName)
+    const lowerCourseName = makeSentenceCase(courseName)
+
+    const studentsWithoutSpacesArray = studentNames.split(',').map(name => makeSentenceCase(name))
+    await createStudentService(studentsWithoutSpacesArray, lowerCohortName, lowerCourseName, radioValue);
 
     //redirect to course page with workspaces that were just created
-    navigate(`/${cohortName}/${courseName}`)
+    navigate(`/cohorts/${lowerCohortName}/courses/${lowerCourseName}`)
   }
 
   return (
@@ -31,11 +32,11 @@ const Workspaces = () => {
      <form action={`${BASE_URL}/workspaces}`} method="POST" onSubmit={(e) => createWorkspace(e)}>
     <FormControl>
       <FormLabel>Course Name</FormLabel>
-      <Input type="text" onChange={(e) => setCourseName(e.target.value)} placeholder="Javascript 101" />
+      <Input type="text" onChange={(e) => setCourseName(e.target.value)} placeholder="JS101" />
     </FormControl>
     <FormControl mt={6}>
       <FormLabel>Cohort Name</FormLabel>
-      <Input onChange={(e) => setCohortName(e.target.value)} type="text" placeholder="Fall 2022" />
+      <Input onChange={(e) => setCohortName(e.target.value)} type="text" placeholder="Fall2022" />
     </FormControl>
     <FormControl mt={6}>
       <FormLabel>Base Template</FormLabel>

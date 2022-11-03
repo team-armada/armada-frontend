@@ -71,7 +71,7 @@ export const getAllServices = async () => {
 
 // Create a service.
 export const createStudentService = async (
-  studentName: string,
+  studentNames: string[],
   cohort: string,
   course: string,
   template: string //codeServerOnly or coderServerPG
@@ -80,7 +80,7 @@ export const createStudentService = async (
   try {
     const response = await axios.post(`${BASE_URL}/services`, {
       data: {
-        studentName,
+        studentNames,
         cohort,
         course,
         template
