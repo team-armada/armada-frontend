@@ -4,6 +4,7 @@ import { extractRelevantData, ICohort } from "./Cohorts";
 import { deleteService, startService, stopService } from "../services/studentService";
 
 import {
+  Flex,
   Heading,
   Button,
   Select,
@@ -22,11 +23,12 @@ const AllWorkspaces = () => {
   const data = useLoaderData();
   const navigate = useNavigate();
   const [filteredData, setFilteredData] = useState<ICohort[]>(extractRelevantData(data))
-  const [filter, setFilter] = useState<string>('student')
+  const [filter, setFilter] = useState<string>('student-asc')
+  const [search, setSearch] = useState('')
 
 
   function updateData(filter: string){
-    if (filter !== 'student' && filter !== 'cohort' && filter !== 'course'){
+    if (filter !== 'student-asc' && filter !== 'cohort-asc' && filter !== 'course-asc' && filter !== 'student-desc' && filter !== 'cohort-desc' && filter !== 'course-desc'){
       throw new Error('An invalid selection has been made')
     }
 
@@ -34,6 +36,27 @@ const AllWorkspaces = () => {
     setFilter(filter)
     sortBy(workspaces, filter)
     setFilteredData(workspaces)
+  };
+
+  function filterBy(searchText: string) {
+
+    const baseData = extractRelevantData(data);
+  
+    searchText = searchText.toLowerCase();
+
+    const searchResults = baseData.filter(workspace => {
+      return workspace.cohort.toLowerCase().startsWith(searchText) || workspace.student.toLowerCase().startsWith(searchText) || workspace.course.toLowerCase().startsWith(searchText)
+    });
+
+    if (searchText === ''){
+      sortBy(baseData, filter)
+      setFilteredData(baseData)
+    } else {
+      sortBy(searchResults, filter)
+      setFilteredData(searchResults);
+    }
+
+    console.log(searchResults);
   }
 
   useEffect(() => {
@@ -42,16 +65,44 @@ const AllWorkspaces = () => {
   }, [])
 
 
-  function sortBy(data: ICohort[], property: 'student' | 'cohort' | 'course'){
+  function sortBy(data: ICohort[], filter: 'student-asc' | 'cohort-asc' | 'course-asc' | 'student-desc' | 'cohort-desc' | 'course-desc'){
+    let options = filter.split('-')
+    
+    if (options.length !== 2){
+      throw new Error('Something went wrong.')
+    }
+
+    const property = options[0]
+    const direction = options[1];
+    
+    if (property !== 'student' &&  property !== 'cohort' && property !== 'course'){
+      throw new Error('Invalid selection made.')
+    }
+    
+    if (direction !== 'asc' && direction !== 'desc'){
+      throw new Error('Invalid direction provided.')
+    }
 
     data.sort((a, b) => {
-      if (a[property] > b[property] ){
-      return 1
-      } else if (b[property]  > a[property] ){
-        return -1
+      
+      if (options[1] === 'asc'){
+          if (a[property] > b[property] ){
+          return 1
+          } else if (b[property]  > a[property] ){
+            return -1
+          } else {
+            return 0
+          }
       } else {
-        return 0
+        if (a[property] > b[property] ){
+          return -1
+          } else if (b[property]  > a[property] ){
+            return 1
+          } else {
+            return 0
+          }
       }
+      
     })
   }
 
@@ -72,13 +123,19 @@ const AllWorkspaces = () => {
   
   return (
     <>
-      <Heading>All Workspaces</Heading>
-      <Select onChange={(e) => updateData(e.target.value)} w={"20%"} placeholder='Sort by '>
-        <option value='student' selected>Student Name</option>
-        <option value='course'>Course</option>
-        <option value='cohort'>Cohort</option>
-      </Select>
-      {/* <Input>This is our search</Input> */}
+      <Heading mb={"20px"}>All Workspaces</Heading>
+      <Flex  justifyContent={"right"} mb={"20px"}>
+        <Select mr={"10px"} onChange={(e) => updateData(e.target.value)} w={"20%"} >
+          <option value='student-asc' selected>Sort: Student Name (ASC)</option>
+          <option value='student-desc'>Sort: Student Name (DESC)</option>
+          <option value='course-asc'>Sort: Course (ASC)</option>
+          <option value='course-desc'>Sort: Course (DESC)</option>
+          <option value='cohort-asc'>Sort: Cohort (ASC)</option>
+          <option value='cohort-desc'>Sort: Cohort (DESC)</option>
+        </Select>
+        <Input onChange={(e) => filterBy(e.target.value)}mr={"20px"} w={"20%"} placeholder="Search here..."/>
+      </Flex>
+
       <TableContainer>
       <Table>
         <Thead>
