@@ -5,7 +5,7 @@ import { BASE_URL } from '../utils/constants';
 import { createStudentService } from '../services/studentService';
 import { makeSentenceCase } from '../utils/stringManipulation';
 
-const Workspaces = () => {
+const NewWorkspace = () => {
   const navigate = useNavigate()
   const baseTemplates = useLoaderData();
   const [courseName, setCourseName] = useState('')
@@ -67,4 +67,4 @@ const Workspaces = () => {
   );
 };
 
-export default Workspaces;
+export default NewWorkspace;

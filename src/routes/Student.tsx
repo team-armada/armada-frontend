@@ -1,9 +1,9 @@
 import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
 
-import { 
+import {
   Center,
   Divider,
-  Heading,   
+  Heading,
   Table,
   Thead,
   Tbody,
@@ -25,10 +25,13 @@ const Student = () => {
 
   // Cohorts
   const filteredCohorts = relevantData.filter(item => location.pathname.includes(item.student))
-  const cohorts = filteredCohorts.map(item => item.cohort)
+  const cohorts = filteredCohorts.map(item =>  item.cohort)
 
   // Courses
-  const courses = relevantData.filter(item => location.pathname.includes(item.student)).map(item => item.course)
+  const filteredCourses = relevantData.filter(item => location.pathname.includes(item.student))
+  const courses = filteredCourses.map(item => {
+    return  {'course': item.course, 'cohort': item.cohort}
+  })
 
   return (
     <>
@@ -40,14 +43,14 @@ const Student = () => {
     <Table>
       <Thead>
         <Th>Course Name</Th>
-        <Th>Course Status</Th>
+        <Th>Cohort</Th>
       </Thead>
       <Tbody>
           {courses.map(course => {
             return (
               <Tr>
-              <Td onClick={(e) => navigate(`courses/${course}`)}>{course}</Td>
-              <Td>Active</Td>
+              <Td onClick={(e) => navigate(`/cohorts/${course.cohort}/courses/${course.course}`)}>{course.course}</Td>
+              <Td onClick={(e) => navigate(`/cohorts/${course.cohort}`)}>{course.cohort}</Td>
               </Tr>
             )
           })}
@@ -68,7 +71,7 @@ const Student = () => {
           {cohorts.map(cohort => {
             return (
               <Tr>
-              <Td onClick={(e) => navigate(`cohorts/${cohort}`)}>{cohort}</Td>
+              <Td onClick={(e) => navigate(`/cohorts/${cohort}`)}>{cohort}</Td>
               <Td>Active</Td>
               </Tr>
             )

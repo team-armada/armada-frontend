@@ -108,7 +108,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       h="full"
       {...rest}>
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-          <Image marginTop={"100px"} boxSize={"150px"} src="src/assets/Logo files/PNGs - SVGs/2x/Asset 2@2x-8.png" alt="Armada's Logo -- A Pirate Ship!"/>
+          <Image marginTop={"100px"} boxSize={"150px"} src="/src/assets/Logo files/PNGs - SVGs/2x/Asset 2@2x-8.png" alt="Armada's Logo -- A Pirate Ship!"/>
       </Flex>
       <Flex mt="110px" h="20" flexDirection="column" alignItems="left" justifyContent="space-between">
       {LinkItems.map((link) => (

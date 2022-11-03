@@ -16,10 +16,12 @@ import Cohort from './routes/Cohort';
 import Cohorts from './routes/Cohorts';
 import Courses from './routes/Courses'
 import Templates from './routes/Templates';
-import Workspaces from './routes/Workspaces';
+import NewWorkspace from './routes/NewWorkspace';
 import Course from './routes/Course';
 import Student from './routes/Student'
 import Students from './routes/Students'
+import WorkspacesHome from './routes/WorkspacesHome';
+import AllWorkspaces from './routes/AllWorkspaces';
 
 const router = createBrowserRouter([
   {
@@ -34,7 +36,21 @@ const router = createBrowserRouter([
       },
       {
         path: '/workspaces',
-        element: <Workspaces />,
+        element: <WorkspacesHome />,
+        errorElement: <Error />,
+      },
+      {
+        path: '/workspaces/all',
+        element: <AllWorkspaces />,
+        errorElement: <Error />,
+        loader: async (): Promise<string[]> => {
+          const data = await getAllServices();
+          return data.result.serviceArns;
+        },
+      },
+      {
+        path: '/workspaces/new',
+        element: <NewWorkspace />,
         errorElement: <Error />,
         loader: async () => {
           const data = await getBaseTemplates();
