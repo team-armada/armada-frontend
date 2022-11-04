@@ -5,7 +5,7 @@ const WorkspacesHome = () => {
   // TODO: Add Images to reduce whitespace.
   return (
     <>
-      <Heading>Workspaces</Heading>
+      <Heading mb={"20px"}>Workspaces</Heading>
       <Flex flexDirection={"column"} gap='5' >
       <Link to="/workspaces/all"><Button mt={"20px"}>All Workspaces</Button></Link>
       <Spacer />

@@ -1,4 +1,5 @@
 import { useLoaderData, useNavigate } from "react-router-dom";
+import EmptyWorkspaces from '../components/EmptyWorkspaces';
 
 import { 
   Heading,   
@@ -68,29 +69,35 @@ const Cohorts = () => {
   const relevantData = extractRelevantData(data)
   const cohorts = filterDuplicates(relevantData, 'cohort')
 
+  const CohortTable = () => {
+    return (
+      <TableContainer>
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Cohort Name</Th>
+              <Th>Cohort Status</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+              {cohorts.map(cohort => {
+                return (
+                  <Tr key={cohort}>
+                    <Td onClick={(e) => navigate(`/cohorts/${cohort}`)}>{cohort}</Td>
+                    <Td>Active</Td>
+                  </Tr>
+                )
+              })}
+          </Tbody>
+        </Table>
+        </TableContainer>
+    )
+  }
+
   return (
     <>
-      <Heading>All Cohorts</Heading>
-      <TableContainer>
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Cohort Name</Th>
-            <Th>Cohort Status</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-            {cohorts.map(cohort => {
-              return (
-                <Tr key={cohort}>
-                  <Td onClick={(e) => navigate(`/cohorts/${cohort}`)}>{cohort}</Td>
-                  <Td>Active</Td>
-                </Tr>
-              )
-            })}
-        </Tbody>
-      </Table>
-      </TableContainer>
+      <Heading mb={"20px"}>All Cohorts</Heading>
+      {cohorts.length ? CohortTable() : EmptyWorkspaces('cohorts')}
     </>
   )
 

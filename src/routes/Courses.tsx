@@ -1,8 +1,6 @@
 import { useLoaderData, useNavigate } from "react-router-dom";
 import compare from 'just-compare';
 
-import { extractRelevantData, filterDuplicates, ICohort } from "./Cohorts";
-
 import {
   Flex,
   Heading,
@@ -18,6 +16,9 @@ import {
   Td,
   TableCaption,
   TableContainer, } from '@chakra-ui/react'
+
+  import { extractRelevantData, filterDuplicates, ICohort } from "./Cohorts";
+import EmptyWorkspaces from "../components/EmptyWorkspaces";
 
   function removeDuplicateCourses(data: ICohort[]){
     const result: ICohort[] = [];
@@ -42,9 +43,8 @@ const Courses = () => {
   let relevantData = extractRelevantData(data);
   relevantData = removeDuplicateCourses(relevantData)
 
-  return (
-    <>
-      <Heading mb={"20px"}>All Courses</Heading>
+  const CourseTable = () => {
+    return (
       <TableContainer>
       <Table>
         <Thead>
@@ -67,6 +67,13 @@ const Courses = () => {
         </Tbody>
       </Table>
       </TableContainer>
+    )
+  }
+
+  return (
+    <>
+      <Heading mb={"20px"}>All Courses</Heading>
+      {relevantData.length ? CourseTable() : EmptyWorkspaces('courses')}
     </>
   )
 };

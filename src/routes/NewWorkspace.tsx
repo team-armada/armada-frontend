@@ -3,7 +3,7 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import { FormControl, FormLabel, Input, Button, Textarea, RadioGroup, Radio, Heading, Stack } from '@chakra-ui/react';
 import { BASE_URL } from '../utils/constants';
 import { createStudentService } from '../services/studentService';
-import { makeSentenceCase } from '../utils/stringManipulation';
+import { makeSentenceCase, makeUpperCase } from '../utils/stringManipulation';
 
 const NewWorkspace = () => {
   const navigate = useNavigate()
@@ -17,13 +17,13 @@ const NewWorkspace = () => {
     e.preventDefault();
 
     const lowerCohortName = makeSentenceCase(cohortName)
-    const lowerCourseName = makeSentenceCase(courseName)
+    const upperCourseName = makeUpperCase(courseName)
 
     const studentsWithoutSpacesArray = studentNames.split(',').map(name => makeSentenceCase(name))
-    await createStudentService(studentsWithoutSpacesArray, lowerCohortName, lowerCourseName, radioValue);
+    await createStudentService(studentsWithoutSpacesArray, lowerCohortName, upperCourseName, radioValue);
 
     //redirect to course page with workspaces that were just created
-    navigate(`/cohorts/${lowerCohortName}/courses/${lowerCourseName}`)
+    navigate(`/cohorts/${lowerCohortName}/courses/${upperCourseName}`)
   }
 
   return (

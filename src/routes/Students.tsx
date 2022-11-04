@@ -12,6 +12,7 @@ import {
   TableCaption,
   TableContainer, } from '@chakra-ui/react'
 import { extractRelevantData, filterDuplicates } from "./Cohorts";
+import EmptyWorkspaces from "../components/EmptyWorkspaces";
 
 const Students = () => {
   const data = useLoaderData();
@@ -22,29 +23,35 @@ const Students = () => {
   const relevantData = extractRelevantData(data);
   const students = filterDuplicates(relevantData, 'student')
 
+  const studentTable = () => {
+    return (
+      <TableContainer>
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Student Name</Th>
+              <Th>More info?</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+              {students.map(student => {
+                return (
+                  <Tr key={student}>
+                    <Td onClick={(e) => navigate(`/students/${student}`)}>{student}</Td>
+                    <Td>Active</Td>
+                  </Tr>
+                )
+              })}
+          </Tbody>
+        </Table>
+      </TableContainer>
+    )
+  }
+
   return (
     <>
-    <Heading>All Students</Heading>
-    <TableContainer>
-    <Table>
-      <Thead>
-        <Tr>
-          <Th>Student Name</Th>
-          <Th>More info?</Th>
-        </Tr>
-      </Thead>
-      <Tbody>
-          {students.map(student => {
-            return (
-              <Tr key={student}>
-                <Td onClick={(e) => navigate(`/students/${student}`)}>{student}</Td>
-                <Td>Active</Td>
-              </Tr>
-            )
-          })}
-      </Tbody>
-    </Table>
-    </TableContainer>
+    <Heading mb={"20px"}>All Students</Heading>
+    {students.length ? studentTable() : EmptyWorkspaces('students')}
   </>
   )
 };
