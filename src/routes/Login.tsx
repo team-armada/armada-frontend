@@ -1,3 +1,7 @@
+import { useNavigate } from "react-router-dom";
+import { useState } from 'react'
+import { useAuth } from "../hooks/useAuth";
+
 import {
   Flex,
   Box,
@@ -14,6 +18,21 @@ import {
 } from '@chakra-ui/react';
 
 export default function Login() {
+  const auth = useAuth();
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const executeSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      const result = await auth.signIn(username, password);
+      if (result.success) {
+          navigate({ pathname: "/" });
+      } else {
+          alert(result.message);
+      }
+  };
+
   return (
 
     <Flex
@@ -33,13 +52,24 @@ export default function Login() {
           boxShadow={'lg'}
           p={8}>
           <Stack spacing={4}>
-            <FormControl id="email">
-              <FormLabel>Email address</FormLabel>
-              <Input type="email" />
+            <form onSubmit={executeSignIn}>
+            <FormControl id="username">
+              <FormLabel>Username</FormLabel>
+              <Input 
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                size="lg"
+                type="text" />
             </FormControl>
             <FormControl id="password">
               <FormLabel>Password</FormLabel>
-              <Input type="password" />
+              <Input
+                type="password"
+                placeholder="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                size="lg"/>
             </FormControl>
             <Stack spacing={10}>
               <Stack
@@ -50,6 +80,7 @@ export default function Login() {
                 <Link color={'blue.400'}>Forgot password?</Link>
               </Stack>
               <Button
+                type="submit"
                 bg={'blue.400'}
                 color={'white'}
                 _hover={{
@@ -58,6 +89,7 @@ export default function Login() {
                 Sign in
               </Button>
             </Stack>
+            </form>
           </Stack>
         </Box>
       </Stack>

@@ -5,6 +5,8 @@ import { ChakraProvider } from '@chakra-ui/react'
 
 import './reset.css';
 
+import { ProvideAuth } from './hooks/useAuth';
+
 import { getBaseTemplates } from './services/templateService';
 import { describeService, getAllServices } from './services/studentService';
 import { getAllWorkspaces } from './services/workspaceService';
@@ -143,7 +145,9 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <ChakraProvider>
-      <RouterProvider router={router} />
+      <ProvideAuth>
+        <RouterProvider router={router} />
+      </ProvideAuth>
     </ChakraProvider>
   </React.StrictMode>
 );
