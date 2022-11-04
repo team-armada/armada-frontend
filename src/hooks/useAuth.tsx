@@ -1,10 +1,12 @@
 import Amplify, { Auth } from "aws-amplify";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { flushSync } from "react-dom";
 import { AwsConfigAuth } from "../auth";
 
 Amplify.configure({ Auth: AwsConfigAuth });
 
 interface UseAuth {
+    isAdmin: boolean;
     isLoading: boolean;
     isAuthenticated: boolean;
     username: string;
@@ -35,7 +37,9 @@ export const useAuth = () => {
 const useProvideAuth = (): UseAuth => {
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
     const [username, setUsername] = useState("");
+
 
     useEffect(() => {
         Auth.currentAuthenticatedUser()
@@ -54,10 +58,18 @@ const useProvideAuth = (): UseAuth => {
     const signIn = async (username: string, password: string) => {
         try {
             const result = await Auth.signIn(username, password);
-            setUsername(result.username);
-            setIsAuthenticated(true);
+            flushSync(() => {
+                setUsername(result.username);
+                setIsAuthenticated(true);
+
+            if (result.challengeParam.userAttributes['custom:isAdmin'] === 'true'){
+                setIsAdmin(true)
+            }
+            })
+
             return { success: true, message: "" };
         } catch (error) {
+            console.log('error')
             return {
                 success: false,
                 message: "LOGIN FAIL",
@@ -80,6 +92,7 @@ const useProvideAuth = (): UseAuth => {
     };
 
     return {
+        isAdmin,
         isLoading,
         isAuthenticated,
         username,

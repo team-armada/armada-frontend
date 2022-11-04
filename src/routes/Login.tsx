@@ -27,7 +27,15 @@ export default function Login() {
       event.preventDefault();
       const result = await auth.signIn(username, password);
       if (result.success) {
-          navigate({ pathname: "/" });
+        console.log(result);
+          navigate("/");
+
+        
+        //check if username is admin, if yes go to admin path
+
+
+        // else go to student path
+          // navigate({ pathname: `/studentPortal"/${studentUserName}`});
       } else {
           alert(result.message);
       }
