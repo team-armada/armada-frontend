@@ -1,8 +1,8 @@
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import EmptyWorkspaces from '../components/EmptyWorkspaces';
 
-import { 
-  Heading,   
+import {
+  Heading,
   Table,
   Thead,
   Tbody,
@@ -11,63 +11,74 @@ import {
   Th,
   Td,
   TableCaption,
-  TableContainer, } from '@chakra-ui/react'
+  TableContainer,
+} from '@chakra-ui/react';
 
+import AdminPrivateRoute from '../components/PrivateRoutes/AdminPrivateRoute';
 
-  export interface ICohort {
-    cohort: string;
-    course: string;
-    student: string;
-    desiredCount?: number;
-    name?: string;
-  }
+export interface ICohort {
+  cohort: string;
+  course: string;
+  student: string;
+  desiredCount?: number;
+  name?: string;
+}
 
-  // Extracting the relevant data from the ARN.
-export function extractRelevantData(array: string[]): ICohort[]{
+// Extracting the relevant data from the ARN.
+export function extractRelevantData(array: string[]): ICohort[] {
   // Extract the cohort-course-student from the Service ARN.
-  const regex = /(?<=\/)([a-zA-z0-9]+\-[a-zA-z0-9]+\-[a-zA-z0-9]+)/gi
+  const regex = /(?<=\/)([a-zA-z0-9]+\-[a-zA-z0-9]+\-[a-zA-z0-9]+)/gi;
 
   // Updating data to be only relevant data.
-  const serviceNamesArray: (RegExpMatchArray | string)[]= array.map(serviceARN => serviceARN?.match(regex) ?? 'Not found')
+  const serviceNamesArray: (RegExpMatchArray | string)[] = array.map(
+    serviceARN => serviceARN?.match(regex) ?? 'Not found'
+  );
 
   // Grab the first match.
-  const stringServiceNamesArray: string[] = serviceNamesArray.map(service => service[0])
+  const stringServiceNamesArray: string[] = serviceNamesArray.map(
+    service => service[0]
+  );
 
   // Splitting data into relevant parts.
-  const separateNames = stringServiceNamesArray.map(service => service.split('-'))
+  const separateNames = stringServiceNamesArray.map(service =>
+    service.split('-')
+  );
 
   // Make into object.
   const serviceObjects = separateNames.map(service => {
     return {
       cohort: service[0],
       course: service[1],
-      student: service[2]
-    }
-  })
+      student: service[2],
+    };
+  });
 
   return serviceObjects;
 }
 
-export function filterDuplicates(data: ICohort[], property: 'cohort' | 'course' | 'student') : string[] {
+export function filterDuplicates(
+  data: ICohort[],
+  property: 'cohort' | 'course' | 'student'
+): string[] {
   const result: string[] = [];
 
-  const filteredData = data.map(data => data[property])
+  const filteredData = data.map(data => data[property]);
 
   filteredData.forEach(item => {
-    if (!result.includes(item)){
-      result.push(item)
+    if (!result.includes(item)) {
+      result.push(item);
     }
-  })
+  });
 
   return result;
 }
 
 const Cohorts = () => {
-  const navigate = useNavigate()
-  let data = useLoaderData()
+  const navigate = useNavigate();
+  let data = useLoaderData();
 
-  const relevantData = extractRelevantData(data)
-  const cohorts = filterDuplicates(relevantData, 'cohort')
+  const relevantData = extractRelevantData(data);
+  const cohorts = filterDuplicates(relevantData, 'cohort');
 
   const CohortTable = () => {
     return (
@@ -80,27 +91,28 @@ const Cohorts = () => {
             </Tr>
           </Thead>
           <Tbody>
-              {cohorts.map(cohort => {
-                return (
-                  <Tr key={cohort}>
-                    <Td onClick={(e) => navigate(`/cohorts/${cohort}`)}>{cohort}</Td>
-                    <Td>Active</Td>
-                  </Tr>
-                )
-              })}
+            {cohorts.map(cohort => {
+              return (
+                <Tr key={cohort}>
+                  <Td onClick={e => navigate(`/cohorts/${cohort}`)}>
+                    {cohort}
+                  </Td>
+                  <Td>Active</Td>
+                </Tr>
+              );
+            })}
           </Tbody>
         </Table>
-        </TableContainer>
-    )
-  }
+      </TableContainer>
+    );
+  };
 
   return (
-    <>
-      <Heading mb={"20px"}>All Cohorts</Heading>
+    <AdminPrivateRoute>
+      <Heading mb={'20px'}>All Cohorts</Heading>
       {cohorts.length ? CohortTable() : EmptyWorkspaces('cohorts')}
-    </>
-  )
-
+    </AdminPrivateRoute>
+  );
 };
 
 export default Cohorts;

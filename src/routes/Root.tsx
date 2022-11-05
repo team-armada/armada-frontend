@@ -1,13 +1,8 @@
 import { Outlet } from 'react-router-dom';
-import Footer from '../components/Footer';
-import SidebarWithHeader from '../components/Naviagtion';
+import SidebarWithHeader from '../components/Navigation';
 
 const Root = () => {
-  return (
-    <>
-      <SidebarWithHeader children={<Outlet />}/>
-    </>
-  );
+  return <SidebarWithHeader children={<Outlet />} />;
 };
 
 export default Root;

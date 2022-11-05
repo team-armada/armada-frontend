@@ -30,7 +30,7 @@ import {
   FiUsers,
   FiMenu,
   FiBell,
-  FiChevronDown
+  FiChevronDown,
 } from 'react-icons/fi';
 
 import { GiBookshelf } from 'react-icons/gi';
@@ -39,42 +39,45 @@ import { HiOutlineUserGroup } from 'react-icons/hi';
 import { IconType } from 'react-icons';
 import { TbSailboat } from 'react-icons/tb';
 import { ReactText } from 'react';
+import { useAuth } from '../hooks/useAuth';
 
 interface LinkItemProps {
   name: string;
   icon: IconType;
   destination: string;
-};
+}
 
 interface SidebarProps extends BoxProps {
   onClose: () => void;
-};
+}
 
 interface NavItemProps extends FlexProps {
   icon: IconType;
   children: ReactText;
   destination: string;
-};
+}
 
 interface MobileProps extends FlexProps {
   onOpen: () => void;
-};
+}
 
 const LinkItems: Array<LinkItemProps> = [
   { name: 'Home', icon: FiHome, destination: '/' },
   { name: 'Workspaces', icon: AiOutlineDesktop, destination: '/workspaces' },
   { name: 'Cohorts', icon: HiOutlineUserGroup, destination: '/cohorts' },
-  { name: 'Courses', icon: GiBookshelf, destination: '/courses'},
+  { name: 'Courses', icon: GiBookshelf, destination: '/courses' },
   { name: 'Students', icon: FiUsers, destination: '/students' },
 ];
 
 export default function SidebarWithHeader({
-  children
-}: {children: ReactNode}) {
+  children,
+}: {
+  children: ReactNode;
+}) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <Box minH="100vh" >
+    <Box minH="100vh">
       <SidebarContent
         onClose={() => onClose}
         display={{ base: 'none', md: 'block' }}
@@ -86,7 +89,8 @@ export default function SidebarWithHeader({
         onClose={onClose}
         returnFocusOnClose={false}
         onOverlayClick={onClose}
-        size="full">
+        size="full"
+      >
         <DrawerContent>
           <SidebarContent onClose={onClose} />
         </DrawerContent>
@@ -98,9 +102,27 @@ export default function SidebarWithHeader({
       </Box>
     </Box>
   );
-};
+}
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
+  const { isAdmin } = useAuth();
+
+  const menuItems = () => {
+    return (
+      <>
+        {LinkItems.map(link => (
+          <NavItem
+            key={link.name}
+            icon={link.icon}
+            destination={link.destination}
+          >
+            {link.name}
+          </NavItem>
+        ))}
+      </>
+    );
+  };
+
   return (
     <Box
       transition="3s ease"
@@ -108,25 +130,36 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       w={{ base: 'full', md: 60 }}
       pos="fixed"
       h="full"
-      {...rest}>
+      {...rest}
+    >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-          <Image marginTop={"100px"} boxSize={"150px"} src="/src/assets/Logo files/PNGs - SVGs/2x/Asset 2@2x-8.png" alt="Armada's Logo -- A Pirate Ship!"/>
+        <Image
+          marginTop={'100px'}
+          boxSize={'150px'}
+          src="/src/assets/Logo files/PNGs - SVGs/2x/Asset 2@2x-8.png"
+          alt="Armada's Logo -- A Pirate Ship!"
+        />
       </Flex>
-      <Flex mt="110px" h="20" flexDirection="column" alignItems="left" justifyContent="space-between">
-      {LinkItems.map((link) => (
-          <NavItem key={link.name} icon={link.icon} destination={link.destination}>
-            {link.name}
-          </NavItem>
-        ))}
+      <Flex
+        mt="110px"
+        h="20"
+        flexDirection="column"
+        alignItems="left"
+        justifyContent="space-between"
+      >
+        {isAdmin ? menuItems() : null}
       </Flex>
-
     </Box>
   );
 };
 
 const NavItem = ({ icon, children, destination, ...rest }: NavItemProps) => {
   return (
-    <Link to={destination} style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
+    <Link
+      to={destination}
+      style={{ textDecoration: 'none' }}
+      _focus={{ boxShadow: 'none' }}
+    >
       <Flex
         align="center"
         color="white"
@@ -139,7 +172,8 @@ const NavItem = ({ icon, children, destination, ...rest }: NavItemProps) => {
           bg: 'cyan.400',
           color: 'white',
         }}
-        {...rest}>
+        {...rest}
+      >
         {icon && (
           <Icon
             mr="4"
@@ -157,13 +191,17 @@ const NavItem = ({ icon, children, destination, ...rest }: NavItemProps) => {
 };
 
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
-  const navigate = useNavigate()
+  const { firstName, lastName, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const handleSignOut = () => {
-    // TODO: Delete JSWT
-
+    signOut();
     navigate('/login');
-  }
+  };
+
+  const handleChangePassword = () => {
+    // TODO: Implement!
+  };
 
   return (
     <Flex
@@ -175,7 +213,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       borderBottomWidth="1px"
       borderBottomColor={useColorModeValue('gray.200', 'gray.700')}
       justifyContent={{ base: 'space-between', md: 'flex-end' }}
-      {...rest}>
+      {...rest}
+    >
       <IconButton
         display={{ base: 'flex', md: 'none' }}
         onClick={onOpen}
@@ -190,13 +229,14 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
             <MenuButton
               py={2}
               transition="all 0.3s"
-              _focus={{ boxShadow: 'none' }}>
+              _focus={{ boxShadow: 'none' }}
+            >
               <HStack>
                 <Avatar
-                  name='Natalie Martos'
-                  color='white'
+                  name={`${firstName} ${lastName}`}
+                  color="white"
                   size={'sm'}
-                  bgColor='indigo'
+                  bgColor="indigo"
                   // 5f1b8c Purple
                   // #5cb8e4 SkyBlue
                   // src={
@@ -208,8 +248,11 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                   display={{ base: 'none', md: 'flex' }}
                   alignItems="flex-start"
                   spacing="1px"
-                  ml="2">
-                  <Text fontSize="sm" color="black" fontWeight="bold">Natalie Martos</Text>
+                  ml="2"
+                >
+                  <Text fontSize="sm" color="black" fontWeight="bold">
+                    {`${firstName} ${lastName}`}
+                  </Text>
                   <Text fontSize="xs" color="black">
                     Admin
                   </Text>
@@ -221,7 +264,11 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
             </MenuButton>
             <MenuList
               bg={useColorModeValue('white', 'white')}
-              borderColor={useColorModeValue('gray.200', 'gray.700')}>
+              borderColor={useColorModeValue('gray.200', 'gray.700')}
+            >
+              <MenuItem onClick={() => handleChangePassword()}>
+                Change Password
+              </MenuItem>
               <MenuItem onClick={() => handleSignOut()}>Sign Out</MenuItem>
             </MenuList>
           </Menu>

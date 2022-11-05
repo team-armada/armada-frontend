@@ -1,102 +1,113 @@
-import Amplify, { Auth } from "aws-amplify";
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { flushSync } from "react-dom";
-import { AwsConfigAuth } from "../auth";
+import Amplify, { Auth } from 'aws-amplify';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { flushSync } from 'react-dom';
+import { AwsConfigAuth } from '../auth';
 
 Amplify.configure({ Auth: AwsConfigAuth });
 
 interface UseAuth {
-    isAdmin: boolean;
-    isLoading: boolean;
-    isAuthenticated: boolean;
-    username: string;
-    signIn: (username: string, password: string) => Promise<Result>;
-    signOut: () => void;
+  isAdmin: boolean;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  username: string;
+  signIn: (username: string, password: string) => Promise<Result>;
+  signOut: () => void;
+  firstName: string;
+  lastName: string;
 }
 
 interface Result {
-    success: boolean;
-    message: string;
+  success: boolean;
+  message: string;
+  adminStatus?: boolean;
 }
 
 type Props = {
-    children?: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 const authContext = createContext({} as UseAuth);
 
 export const ProvideAuth: React.FC<Props> = ({ children }) => {
-    const auth = useProvideAuth();
-    return <authContext.Provider value={auth}>{children}</authContext.Provider>;
+  const auth = useProvideAuth();
+  return <authContext.Provider value={auth}>{children}</authContext.Provider>;
 };
 
 export const useAuth = () => {
-    return useContext(authContext);
+  return useContext(authContext);
 };
 
 const useProvideAuth = (): UseAuth => {
-    const [isLoading, setIsLoading] = useState(true);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [username, setUsername] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
 
+  useEffect(() => {
+    Auth.currentAuthenticatedUser()
+      .then(result => {
+        setUsername(result.username.toLowerCase());
+        setIsAuthenticated(true);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setUsername('');
+        setIsAuthenticated(false);
+        setIsLoading(false);
+      });
+  }, []);
 
-    useEffect(() => {
-        Auth.currentAuthenticatedUser()
-            .then((result) => {
-                setUsername(result.username);
-                setIsAuthenticated(true);
-                setIsLoading(false);
-            })
-            .catch(() => {
-                setUsername("");
-                setIsAuthenticated(false);
-                setIsLoading(false);
-            });
-    }, []);
+  const signIn = async (username: string, password: string) => {
+    try {
+      const result = await Auth.signIn(username, password);
+      let adminStatus = false;
+      flushSync(() => {
+        setUsername(result.username.toLowerCase());
+        setIsAuthenticated(true);
 
-    const signIn = async (username: string, password: string) => {
-        try {
-            const result = await Auth.signIn(username, password);
-            flushSync(() => {
-                setUsername(result.username);
-                setIsAuthenticated(true);
-
-            if (result.challengeParam.userAttributes['custom:isAdmin'] === 'true'){
-                setIsAdmin(true)
-            }
-            })
-
-            return { success: true, message: "" };
-        } catch (error) {
-            console.log('error')
-            return {
-                success: false,
-                message: "LOGIN FAIL",
-            };
+        if (result.challengeParam.userAttributes['custom:isAdmin'] === 'true') {
+          setIsAdmin(true);
+          adminStatus = true;
         }
-    };
 
-    const signOut = async () => {
-        try {
-            await Auth.signOut();
-            setUsername("");
-            setIsAuthenticated(false);
-            return { success: true, message: "" };
-        } catch (error) {
-            return {
-                success: false,
-                message: "LOGOUT FAIL",
-            };
-        }
-    };
+        setFirstName(result.challengeParam.userAttributes.given_name);
+        setLastName(result.challengeParam.userAttributes.family_name);
+      });
 
-    return {
-        isAdmin,
-        isLoading,
-        isAuthenticated,
-        username,
-        signIn,
-        signOut,
-    };
+      return { success: true, message: '', adminStatus };
+    } catch (error) {
+      console.log('error');
+      return {
+        success: false,
+        message: 'LOGIN FAIL',
+      };
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      await Auth.signOut();
+      setUsername('');
+      setIsAuthenticated(false);
+      return { success: true, message: '' };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'LOGOUT FAIL',
+      };
+    }
+  };
+
+  return {
+    firstName,
+    lastName,
+    isAdmin,
+    isLoading,
+    isAuthenticated,
+    username,
+    signIn,
+    signOut,
+  };
 };

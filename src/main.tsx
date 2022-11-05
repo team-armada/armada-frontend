@@ -1,30 +1,31 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { ChakraProvider } from '@chakra-ui/react'
+import { ChakraProvider } from '@chakra-ui/react';
 
+import './index.css';
 import './reset.css';
 
 import { ProvideAuth } from './hooks/useAuth';
 
 import { getBaseTemplates } from './services/templateService';
 import { describeService, getAllServices } from './services/studentService';
-import { getAllWorkspaces } from './services/workspaceService';
 
 import Root from './routes/Root';
 import Home from './routes/Home';
 import Error from './routes/Error';
 import Cohort from './routes/Cohort';
 import Cohorts, { extractRelevantData } from './routes/Cohorts';
-import Courses from './routes/Courses'
+import Courses from './routes/Courses';
 import Templates from './routes/Templates';
-import NewWorkspace from './routes/NewWorkspace';
 import Course from './routes/Course';
-import Student from './routes/Student'
-import Students from './routes/Students'
+import Student from './routes/Student';
+import Students from './routes/Students';
 import WorkspacesHome from './routes/WorkspacesHome';
 import AllWorkspaces from './routes/AllWorkspaces';
 import Login from './routes/Login';
+import NewWorkspace from './routes/NewWorkspace';
+import StudentPortal from './routes/StudentPortal';
 
 const router = createBrowserRouter([
   {
@@ -49,25 +50,25 @@ const router = createBrowserRouter([
         loader: async (): Promise<string[]> => {
           let data = await getAllServices();
           data = data.result.serviceArns;
-          data = extractRelevantData(data)
+          data = extractRelevantData(data);
 
           const promises = [];
 
-          for (let count = 0; count < data.length; count++){
-            const current = data[count]
-            const name = `${current.cohort}-${current.course}-${current.student}`
+          for (let count = 0; count < data.length; count++) {
+            const current = data[count];
+            const name = `${current.cohort}-${current.course}-${current.student}`;
             data[count].name = name;
 
-            promises.push(describeService(name))
+            promises.push(describeService(name));
           }
 
           const counts = await Promise.all(promises);
 
-          for (let countsCount = 0; countsCount < data.length; countsCount++){
-            data[countsCount].desiredCount = counts[countsCount]
+          for (let countsCount = 0; countsCount < data.length; countsCount++) {
+            data[countsCount].desiredCount = counts[countsCount];
           }
 
-          return data
+          return data;
         },
       },
       {
@@ -133,12 +134,39 @@ const router = createBrowserRouter([
           return data.result.serviceArns;
         },
       },
+      {
+        path: '/studentPortal/:student',
+        element: <StudentPortal />,
+        errorElement: <Error />,
+        loader: async (): Promise<string[]> => {
+          let data = await getAllServices();
+          data = data.result.serviceArns;
+          data = extractRelevantData(data);
+          const promises = [];
+
+          for (let count = 0; count < data.length; count++) {
+            const current = data[count];
+            const name = `${current.cohort}-${current.course}-${current.student}`;
+            data[count].name = name;
+
+            promises.push(describeService(name));
+          }
+
+          const counts = await Promise.all(promises);
+
+          for (let countsCount = 0; countsCount < data.length; countsCount++) {
+            data[countsCount].desiredCount = counts[countsCount];
+          }
+
+          return data;
+        },
+      },
     ],
   },
   {
-        path: '/login',
-        element: <Login />,
-        errorElement: <Error />
+    path: '/login',
+    element: <Login />,
+    errorElement: <Error />,
   },
 ]);
 
