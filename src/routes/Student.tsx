@@ -1,4 +1,4 @@
-import { useLoaderData, useLocation, useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 
 import {
   Center,
@@ -7,11 +7,9 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
 } from '@chakra-ui/react';
 
@@ -20,27 +18,10 @@ import AdminPrivateRoute from '../components/PrivateRoutes/AdminPrivateRoute';
 const Student = () => {
   const data = useLoaderData();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const relevantData = extractRelevantData(data);
-
-  // Cohorts
-  const filteredCohorts = relevantData.filter(item =>
-    location.pathname.includes(item.student)
-  );
-  const cohorts = filteredCohorts.map(item => item.cohort);
-
-  // Courses
-  const filteredCourses = relevantData.filter(item =>
-    location.pathname.includes(item.student)
-  );
-  const courses = filteredCourses.map(item => {
-    return { course: item.course, cohort: item.cohort };
-  });
 
   return (
     <AdminPrivateRoute>
-      <Heading>{filteredCohorts[0].student}</Heading>
+      <Heading>{`${student.firstName} ${student.lastName}`}</Heading>
       <TableContainer mt={'20px'}>
         <Center>
           <Heading size="lg">Courses</Heading>

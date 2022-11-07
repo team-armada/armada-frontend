@@ -191,7 +191,7 @@ const NavItem = ({ icon, children, destination, ...rest }: NavItemProps) => {
 };
 
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
-  const { firstName, lastName, signOut } = useAuth();
+  const { firstName, lastName, signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   const handleSignOut = () => {
@@ -254,7 +254,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                     {`${firstName} ${lastName}`}
                   </Text>
                   <Text fontSize="xs" color="black">
-                    Admin
+                    {isAdmin ? 'Admin' : 'Student'}
                   </Text>
                 </VStack>
                 <Box display={{ base: 'none', md: 'flex' }}>

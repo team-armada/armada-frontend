@@ -2,6 +2,7 @@ import Amplify, { Auth } from 'aws-amplify';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { AwsConfigAuth } from '../auth';
+import { getSpecificStudent } from '../services/userService';
 
 Amplify.configure({ Auth: AwsConfigAuth });
 
@@ -62,22 +63,17 @@ const useProvideAuth = (): UseAuth => {
   const signIn = async (username: string, password: string) => {
     try {
       const result = await Auth.signIn(username, password);
-      console.log(result);
-      let adminStatus = false;
+      const user = await getSpecificStudent(username);
+
       flushSync(() => {
-        setUsername(result.username.toLowerCase());
+        setUsername(user.username);
         setIsAuthenticated(true);
-
-        if (result.challengeParam.userAttributes['custom:isAdmin'] === 'true') {
-          setIsAdmin(true);
-          adminStatus = true;
-        }
-
-        setFirstName(result.challengeParam.userAttributes.given_name);
-        setLastName(result.challengeParam.userAttributes.family_name);
+        setIsAdmin(user.isAdmin);
+        setFirstName(user.firstName);
+        setLastName(user.lastName);
       });
 
-      return { success: true, message: '', adminStatus };
+      return { success: true, message: '', adminStatus: user.isAdmin };
     } catch (error) {
       console.log('error');
       return {

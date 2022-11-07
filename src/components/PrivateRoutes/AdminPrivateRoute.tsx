@@ -13,6 +13,7 @@ type Props = {
 // TODO: Make adjustments to check role and get current username.
 const AdminPrivateRoute: React.FC<Props> = ({ children }) => {
   const { isAdmin, isAuthenticated } = useAuth();
+
   return isAuthenticated && isAdmin ? (
     <>{children}</>
   ) : (
