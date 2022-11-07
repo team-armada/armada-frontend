@@ -85,16 +85,18 @@ export const createStudentService = async (
   studentNames: string[],
   cohort: string,
   course: string,
-  template: string //codeServerOnly or coderServerPG
+  template: string, //codeServerOnly or coderServerPG
+  courseId: number
   //TODO: check if there is a version for this task def, if not, default to 1, else increase by 1
 ) => {
   try {
-    const response = await axios.post(`${BASE_URL}/service`, {
+    const response = await axios.post(`${BASE_URL}/service/create`, {
       data: {
         studentNames,
         cohort,
         course,
         template,
+        courseId,
       },
     });
     return response.data;

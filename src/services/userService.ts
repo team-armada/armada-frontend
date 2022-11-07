@@ -86,3 +86,16 @@ export const createStudent = async (
   const response = await axios.post(`${BASE_URL}/user/create`, data);
   return response.data.result;
 };
+
+// Get all students who don't have a workspace for a given course.
+// '/allStudentsWithoutWorkspaces/:courseId';
+
+export const getCourseStudentsWithoutWorkspaces = async (
+  courseId: number
+): Promise<ISpecificStudent> => {
+  const response = await axios.get(
+    `${BASE_URL}/user/allStudentsWithoutWorkspaces/${courseId}`
+  );
+
+  return response.data.result;
+};

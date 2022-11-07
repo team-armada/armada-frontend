@@ -12,8 +12,29 @@ import {
   Th,
   Thead,
   Tr,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+  Checkbox,
+  CheckboxGroup,
+  Stack,
+  useCheckbox,
+  chakra,
+  Text,
+  useCheckboxGroup,
+  Box,
 } from '@chakra-ui/react';
 import {
+  createStudentService,
   deleteService,
   describeService,
   startService,
@@ -24,6 +45,12 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 
 import AdminPrivateRoute from '../components/PrivateRoutes/AdminPrivateRoute';
 import { ICohort } from './Cohorts';
+import {
+  getAllCohorts,
+  getAllCoursesForCohort,
+} from '../services/cohortService';
+import { getCourseStudentsWithoutWorkspaces } from '../services/userService';
+import { makeLowerCase } from '../utils/stringManipulation';
 
 const AllWorkspaces = () => {
   const workspaces = useLoaderData();
@@ -31,6 +58,116 @@ const AllWorkspaces = () => {
   const [filteredData, setFilteredData] = useState<ICohort[]>(workspaces);
   const [filter, setFilter] = useState<string>('student-asc');
   const [search, setSearch] = useState('');
+  const [cohorts, setCohorts] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState(0);
+  const [selectedCohort, setSelectedCohort] = useState(0);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  useEffect(() => {
+    const populateCohorts = async () => {
+      const cohorts = await getAllCohorts();
+      setCohorts(cohorts);
+    };
+
+    populateCohorts();
+  }, []);
+
+  function CustomCheckbox(props) {
+    const { state, getCheckboxProps, getInputProps, getLabelProps, htmlProps } =
+      useCheckbox(props);
+
+    return (
+      <chakra.label
+        display="flex"
+        flexDirection="row"
+        alignItems="center"
+        gridColumnGap={2}
+        maxW="40"
+        bg="green.50"
+        border="1px solid"
+        borderColor="green.500"
+        rounded="lg"
+        px={3}
+        py={1}
+        cursor="pointer"
+        {...htmlProps}
+      >
+        <input {...getInputProps()} hidden />
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          border="2px solid"
+          borderColor="green.500"
+          w={4}
+          h={4}
+          {...getCheckboxProps()}
+        >
+          {state.isChecked && <Box w={2} h={2} bg="green.500" />}
+        </Flex>
+        <Text color="gray.700" {...getLabelProps()}>
+          {props.id}
+        </Text>
+      </chakra.label>
+    );
+  }
+
+  const { value, getCheckboxProps } = useCheckboxGroup({
+    defaultValue: [],
+  });
+
+  const handleCreateWorkspaces = async (students: string[]) => {
+    const cohortName = cohorts.find(
+      cohort => cohort.id === Number(selectedCohort)
+    ).name;
+    const courseName = courses.find(
+      course => course.id === Number(selectedCourse)
+    ).name;
+
+    const lowerCohort = makeLowerCase(cohortName);
+    const lowerCourse = makeLowerCase(courseName);
+    const lowercaseStudents = students.map(student => {
+      const result = {};
+      const studentValues = student.split('_');
+      const username = studentValues[0];
+      result.username = makeLowerCase(username);
+      result.uuid = studentValues[1];
+      return result;
+    });
+
+    console.log('Student', lowercaseStudents);
+    console.log('Cohort', lowerCohort);
+    console.log('Course', lowerCourse);
+
+    await createStudentService(
+      lowercaseStudents,
+      lowerCohort,
+      lowerCourse,
+      'codeServerOnly',
+      selectedCourse
+    );
+  };
+
+  const handlePopulateCourses = async (cohortId: number) => {
+    const result = await getAllCoursesForCohort(cohortId);
+    setCourses(result.courses);
+  };
+
+  const handleSelectCohort = async (cohortId: number) => {
+    setSelectedCohort(cohortId);
+    handlePopulateCourses(cohortId);
+  };
+
+  const handlePopulateStudents = async courseId => {
+    const students = await getCourseStudentsWithoutWorkspaces(courseId);
+    setStudents(students);
+  };
+
+  const handleSelectCourse = async (courseId: number) => {
+    setSelectedCourse(courseId);
+    handlePopulateStudents(courseId);
+  };
 
   function updateData(filter: string) {
     if (
@@ -144,7 +281,7 @@ const AllWorkspaces = () => {
   return (
     <AdminPrivateRoute>
       <Heading mb={'20px'}>All Workspaces</Heading>
-      <Button>Create a Workspace</Button>
+      <Button onClick={onOpen}>Create Workspaces</Button>
       <Flex justifyContent={'right'} mb={'20px'}>
         <Select
           mr={'10px'}
@@ -229,6 +366,64 @@ const AllWorkspaces = () => {
           </Tbody>
         </Table>
       </TableContainer>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Create Workspaces</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Cohort</FormLabel>
+              <Select
+                onChange={e => handleSelectCohort(e.target.value)}
+                placeholder="Select cohort"
+              >
+                {cohorts.map(cohort => (
+                  <option key={cohort.id} value={cohort.id}>
+                    {cohort.name}
+                  </option>
+                ))}
+              </Select>
+              <FormLabel>Course</FormLabel>
+              <Select
+                onChange={e => handleSelectCourse(e.target.value)}
+                placeholder="Select course"
+              >
+                {courses.map(course => (
+                  <option key={course.id} value={course.id}>
+                    {course.name}
+                  </option>
+                ))}
+              </Select>
+              <FormLabel>Student Names</FormLabel>
+              <Stack>
+                {students.map(student => {
+                  return (
+                    <CustomCheckbox
+                      key={student.uuid}
+                      {...getCheckboxProps({
+                        value: `${student.username}_${student.uuid}`,
+                        id: `${student.firstName} ${student.lastName}`,
+                      })}
+                    />
+                  );
+                })}
+              </Stack>
+            </FormControl>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              onClick={() => handleCreateWorkspaces(value)}
+              colorScheme="blue"
+              mr={3}
+            >
+              Create Workspaces
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </AdminPrivateRoute>
   );
 };
