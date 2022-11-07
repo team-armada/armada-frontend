@@ -5,7 +5,6 @@ import {
   Input,
   Select,
   Table,
-  TableCaption,
   TableContainer,
   Tbody,
   Td,
@@ -27,9 +26,9 @@ import AdminPrivateRoute from '../components/PrivateRoutes/AdminPrivateRoute';
 import { ICohort } from './Cohorts';
 
 const AllWorkspaces = () => {
-  const data = useLoaderData();
+  const workspaces = useLoaderData();
   const navigate = useNavigate();
-  const [filteredData, setFilteredData] = useState<ICohort[]>(data);
+  const [filteredData, setFilteredData] = useState<ICohort[]>(workspaces);
   const [filter, setFilter] = useState<string>('student-asc');
   const [search, setSearch] = useState('');
 
@@ -52,11 +51,9 @@ const AllWorkspaces = () => {
   }
 
   function filterBy(searchText: string) {
-    const baseData = data;
-
     searchText = searchText.toLowerCase();
 
-    const searchResults = baseData.filter(workspace => {
+    const searchResults = workspaces.filter(workspace => {
       return (
         workspace.cohort.toLowerCase().startsWith(searchText) ||
         workspace.student.toLowerCase().startsWith(searchText) ||
@@ -65,8 +62,8 @@ const AllWorkspaces = () => {
     });
 
     if (searchText === '') {
-      sortBy(baseData, filter);
-      setFilteredData(baseData);
+      sortBy(workspaces, filter);
+      setFilteredData(workspaces);
     } else {
       sortBy(searchResults, filter);
       setFilteredData(searchResults);
@@ -74,7 +71,6 @@ const AllWorkspaces = () => {
   }
 
   useEffect(() => {
-    const workspaces = data;
     updateData(filter);
   }, []);
 
@@ -183,20 +179,28 @@ const AllWorkspaces = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {filteredData.map(workspace => {
-              const name = `${workspace.cohort}-${workspace.course}-${workspace.student}`;
+            {workspaces.map(workspace => {
+              const student = workspace.user;
+              const course = workspace.Course;
+              const cohort = course.cohort;
 
               return (
-                <Tr key={name}>
-                  <Td>{workspace.student}</Td>
-                  <Td>{workspace.cohort}</Td>
-                  <Td>{workspace.course}</Td>
+                <Tr key={workspace.uuid}>
+                  <Td
+                    onClick={() => navigate(`/student/${student.username}`)}
+                  >{`${student.firstName} ${student.lastName}`}</Td>
+                  <Td onClick={() => navigate(`/cohort/${cohort.id}`)}>
+                    {cohort.name}
+                  </Td>
+                  <Td onClick={() => navigate(`/course/${course.id}`)}>
+                    {course.name}
+                  </Td>
                   <Td>
                     <Button
                       colorScheme="facebook"
                       mr={'10px'}
                       disabled={workspace.desiredCount === 1}
-                      onClick={() => start(name)}
+                      onClick={() => start(workspace.uuid)}
                     >
                       Start
                     </Button>
@@ -204,7 +208,7 @@ const AllWorkspaces = () => {
                       colorScheme="telegram"
                       mr={'10px'}
                       disabled={workspace.desiredCount === 0}
-                      onClick={() => stop(name)}
+                      onClick={() => stop(workspace.uuid)}
                     >
                       Stop
                     </Button>
@@ -212,7 +216,7 @@ const AllWorkspaces = () => {
                       colorScheme="red"
                       mr={'10px'}
                       disabled={workspace.desiredCount === 1}
-                      onClick={() => remove(name)}
+                      onClick={() => remove(workspace.uuid)}
                     >
                       Delete
                     </Button>

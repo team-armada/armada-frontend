@@ -63,7 +63,7 @@ const useProvideAuth = (): UseAuth => {
   const signIn = async (username: string, password: string) => {
     try {
       const result = await Auth.signIn(username, password);
-      const user = await getSpecificStudent(username);
+      const { user } = await getSpecificStudent(username);
 
       flushSync(() => {
         setUsername(user.username);

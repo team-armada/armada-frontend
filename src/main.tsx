@@ -17,7 +17,6 @@ import Error from './routes/Error';
 import Cohort from './routes/Cohort';
 import Cohorts from './routes/Cohorts';
 import Courses from './routes/Courses';
-import Templates from './routes/Templates';
 import Course from './routes/Course';
 import Student from './routes/Student';
 import Students from './routes/Students';
@@ -56,27 +55,8 @@ const router = createBrowserRouter([
         path: '/workspaces/all',
         element: <AllWorkspaces />,
         errorElement: <Error />,
-        loader: async (): Promise<string[]> => {
-          let data = await getAllServices();
-          data = data.result.serviceArns;
-          data = extractRelevantData(data);
-
-          const promises = [];
-
-          for (let count = 0; count < data.length; count++) {
-            const current = data[count];
-            const name = `${current.cohort}-${current.course}-${current.student}`;
-            data[count].name = name;
-
-            promises.push(describeService(name));
-          }
-
-          const counts = await Promise.all(promises);
-
-          for (let countsCount = 0; countsCount < data.length; countsCount++) {
-            data[countsCount].desiredCount = counts[countsCount];
-          }
-
+        loader: async () => {
+          const data = await getAllServices();
           return data;
         },
       },

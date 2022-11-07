@@ -16,8 +16,8 @@ export interface IResponse {
 
 // Retrieve all workspaces
 export const getAllWorkspaces = async (): Promise<string[]> => {
-  const response = await axios.get<IResponse>(`${BASE_URL}/workspace`);
-  return response.data.result.taskArns;
+  const response = await axios.get(`${BASE_URL}/service/all`);
+  return response.data;
 };
 
 // Run a Workspace

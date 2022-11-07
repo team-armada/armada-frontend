@@ -33,9 +33,11 @@ const Course = () => {
           <Tbody>
             {students.map(student => {
               return (
-                <Tr key={student}>
-                  <Td onClick={e => navigate(`/student/${student}`)}>
-                    {student}
+                <Tr key={student.userId}>
+                  <Td
+                    onClick={e => navigate(`/student/${student.user.username}`)}
+                  >
+                    {`${student.user.firstName} ${student.user.lastName}`}
                   </Td>
                   <Td>Active</Td>
                 </Tr>

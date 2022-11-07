@@ -60,8 +60,8 @@ export const coderServerOnly: IContainerDefinition = {
 // Retrieve all services
 export const getAllServices = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/service`);
-    return response.data;
+    const response = await axios.get(`${BASE_URL}/service/all`);
+    return response.data.result;
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.log(err.message);
