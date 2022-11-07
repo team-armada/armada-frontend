@@ -144,6 +144,7 @@ const AllWorkspaces = () => {
   return (
     <AdminPrivateRoute>
       <Heading mb={'20px'}>All Workspaces</Heading>
+      <Button>Create a Workspace</Button>
       <Flex justifyContent={'right'} mb={'20px'}>
         <Select
           mr={'10px'}

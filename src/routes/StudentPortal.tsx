@@ -1,11 +1,7 @@
 import {
   Button,
-  Flex,
   Heading,
-  Input,
-  Select,
   Table,
-  TableCaption,
   TableContainer,
   Tbody,
   Td,
@@ -14,30 +10,22 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
-import {
-  deleteService,
-  describeService,
-  startService,
-  stopService,
-} from '../services/studentService';
-import { useEffect, useState } from 'react';
-import { useLoaderData, useLocation, useNavigate } from 'react-router-dom';
 
-import { ICohort } from './Cohorts';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import StudentPrivateRoute from '../components/PrivateRoutes/StudentPrivateRoute';
-import { useAuth } from '../hooks/useAuth';
+import { startService } from '../services/studentService';
 
 const StudentPortal = () => {
-  const { username } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
   let data = useLoaderData();
-  data = data.filter(data => data.student === 'Jdguillaume');
-  const [filteredData] = useState<ICohort[]>(data);
+  const navigate = useNavigate();
+
+  const workspaces = data.user.workspaces;
+
+  // TODO: Implement on-click for workspace connect button.
 
   const start = async (name: string) => {
     await startService(name);
-    navigate(location);
+    navigate('');
   };
 
   return (
@@ -47,31 +35,43 @@ const StudentPortal = () => {
         <Table>
           <Thead>
             <Tr>
-              <Th>Student Name</Th>
               <Th>Cohort</Th>
               <Th>Course</Th>
               <Th>Actions</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {filteredData.map(workspace => {
-              const name = `${workspace.cohort}-${workspace.course}-${workspace.student}`;
-
+            {workspaces.map(workspace => {
               return (
-                <Tr key={name}>
-                  <Td>{workspace.student}</Td>
-                  <Td>{workspace.cohort}</Td>
-                  <Td>{workspace.course}</Td>
+                <Tr key={workspace.uuid}>
+                  <Td
+                    onClick={() =>
+                      navigate(`/cohort/${workspace.Course.cohort.id}`)
+                    }
+                  >
+                    {workspace.Course.cohort.name}
+                  </Td>
+                  <Td
+                    onClick={() => navigate(`/course/${workspace.Course.id}`)}
+                  >
+                    {workspace.Course.name}
+                  </Td>
                   <Td>
                     <Button
                       colorScheme="facebook"
                       mr={'10px'}
                       disabled={workspace.desiredCount === 1}
-                      onClick={() => start(name)}
+                      onClick={() => start(workspace.uuid)}
                     >
-                      Start
+                      Resume
                     </Button>
-                    <Button colorScheme="green">Connect</Button>
+                    <Button
+                      colorScheme="telegram"
+                      mr={'10px'}
+                      disabled={workspace.desiredCount === 0}
+                    >
+                      Connect
+                    </Button>
                   </Td>
                 </Tr>
               );

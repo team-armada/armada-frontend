@@ -54,3 +54,35 @@ export const getSpecificStudent = async (
   const response = await axios.get(`${BASE_URL}/user/${username}`);
   return response.data.result;
 };
+
+// Retrieve specific user details
+export const getStudentsNotInCohort = async (
+  cohortId: number
+): Promise<ISpecificStudent> => {
+  const response = await axios.get(
+    `${BASE_URL}/user/allStudentsNotInCohort/${cohortId}`
+  );
+
+  return response.data.result;
+};
+
+// Create a user
+export const createStudent = async (
+  username: string,
+  firstName: string,
+  lastName: string,
+  email: string
+) => {
+  const data = {
+    data: {
+      username,
+      firstName,
+      lastName,
+      email,
+      userType: 'student',
+    },
+  };
+
+  const response = await axios.post(`${BASE_URL}/user/create`, data);
+  return response.data.result;
+};
