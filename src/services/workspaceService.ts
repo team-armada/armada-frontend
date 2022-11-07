@@ -16,13 +16,13 @@ export interface IResponse {
 
 // Retrieve all workspaces
 export const getAllWorkspaces = async (): Promise<string[]> => {
-  const response = await axios.get<IResponse>(`${BASE_URL}/workspaces`);
+  const response = await axios.get<IResponse>(`${BASE_URL}/workspace`);
   return response.data.result.taskArns;
 };
 
 // Run a Workspace
 export const runWorkspace = async (taskDefinitionArn: string) => {
-  const response = await axios.post(`${BASE_URL}/workspaces`, {
+  const response = await axios.post(`${BASE_URL}/workspace`, {
     data: {
       taskDefinitionArn,
     },
@@ -35,7 +35,7 @@ export const stopWorkspace = async (
   workspaceArn: string,
   reason: string = 'SESSION_ENDED'
 ) => {
-  const response = await axios.put(`${BASE_URL}/workspaces`, {
+  const response = await axios.put(`${BASE_URL}/workspace`, {
     data: {
       taskID: workspaceArn,
       reason,

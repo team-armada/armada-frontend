@@ -1,38 +1,27 @@
-import { useLocation, useLoaderData, useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import {
   Heading,
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
 } from '@chakra-ui/react';
 import AdminPrivateRoute from '../components/PrivateRoutes/AdminPrivateRoute';
-
-import { extractRelevantData, filterDuplicates } from './Cohorts';
+import EmptyWorkspaces from '../components/EmptyWorkspaces';
+import EmptyStudents from '../components/EmptyStudents';
 
 const Course = () => {
-  const location = useLocation();
   const data = useLoaderData();
   const navigate = useNavigate();
 
-  const relevantData = extractRelevantData(data);
+  const course = data.course;
+  const students = data.students;
 
-  const filteredData = relevantData.filter(item => {
+  const StudentsTable = () => {
     return (
-      location.pathname.includes(item.cohort) &&
-      location.pathname.includes(item.course)
-    );
-  });
-  const students = filterDuplicates(filteredData, 'student');
-
-  return (
-    <AdminPrivateRoute>
-      <Heading>Course Name: {filteredData[0].course}</Heading>
       <TableContainer>
         <Table>
           <Thead>
@@ -45,7 +34,7 @@ const Course = () => {
             {students.map(student => {
               return (
                 <Tr key={student}>
-                  <Td onClick={e => navigate(`/students/${student}`)}>
+                  <Td onClick={e => navigate(`/student/${student}`)}>
                     {student}
                   </Td>
                   <Td>Active</Td>
@@ -55,6 +44,13 @@ const Course = () => {
           </Tbody>
         </Table>
       </TableContainer>
+    );
+  };
+
+  return (
+    <AdminPrivateRoute>
+      <Heading>Course Name: {course.name}</Heading>
+      {students.length ? StudentsTable() : EmptyStudents('students')}
     </AdminPrivateRoute>
   );
 };

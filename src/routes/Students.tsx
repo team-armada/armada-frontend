@@ -12,18 +12,12 @@ import {
   TableCaption,
   TableContainer,
 } from '@chakra-ui/react';
-import { extractRelevantData, filterDuplicates } from './Cohorts';
 import EmptyWorkspaces from '../components/EmptyWorkspaces';
 import AdminPrivateRoute from '../components/PrivateRoutes/AdminPrivateRoute';
 
 const Students = () => {
-  const data = useLoaderData();
+  const students = useLoaderData();
   const navigate = useNavigate();
-
-  // Retrieve All Students
-  // TODO: Create new object that maps to student and all their courses.
-  const relevantData = extractRelevantData(data);
-  const students = filterDuplicates(relevantData, 'student');
 
   const studentTable = () => {
     return (
@@ -38,9 +32,9 @@ const Students = () => {
           <Tbody>
             {students.map(student => {
               return (
-                <Tr key={student}>
-                  <Td onClick={e => navigate(`/students/${student}`)}>
-                    {student}
+                <Tr key={student.uuid}>
+                  <Td onClick={e => navigate(`/student/${student.username}`)}>
+                    {`${student.firstName} ${student.lastName}`}
                   </Td>
                   <Td>Active</Td>
                 </Tr>

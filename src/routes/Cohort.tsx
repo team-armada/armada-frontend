@@ -9,25 +9,19 @@ import {
   Td,
 } from '@chakra-ui/react';
 import { useLoaderData, useNavigate, useLocation } from 'react-router-dom';
-import { extractRelevantData, filterDuplicates } from './Cohorts';
 import AdminPrivateRoute from '../components/PrivateRoutes/AdminPrivateRoute';
 
 //get list of courses from the cohort
 const Cohort = () => {
-  const location = useLocation();
   const data = useLoaderData();
   const navigate = useNavigate();
 
-  const relevantData = extractRelevantData(data);
-
-  const filteredData = relevantData.filter(item => {
-    return location.pathname.includes(item.cohort);
-  });
-  const courses = filterDuplicates(filteredData, 'course');
+  const cohort = data.cohort;
+  const courses = data.courses;
 
   return (
     <AdminPrivateRoute>
-      <Heading>Cohort: {filteredData[0].cohort}</Heading>
+      <Heading>Cohort: {`${cohort.name}`}</Heading>
       <TableContainer>
         <Table>
           <Thead>
@@ -39,8 +33,10 @@ const Cohort = () => {
           <Tbody>
             {courses.map(course => {
               return (
-                <Tr key={course}>
-                  <Td onClick={e => navigate(`courses/${course}`)}>{course}</Td>
+                <Tr key={course.id}>
+                  <Td onClick={e => navigate(`/course/${course.id}`)}>
+                    {course.name}
+                  </Td>
                   <Td>Active</Td>
                 </Tr>
               );

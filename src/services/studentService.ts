@@ -60,7 +60,7 @@ export const coderServerOnly: IContainerDefinition = {
 // Retrieve all services
 export const getAllServices = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/services`);
+    const response = await axios.get(`${BASE_URL}/service`);
     return response.data;
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -69,10 +69,10 @@ export const getAllServices = async () => {
   }
 };
 
-export const describeService = async (service:string) => {
+export const describeService = async (service: string) => {
   try {
     const response = await axios.get(`${BASE_URL}/service/${service}`);
-    return response.data.result.services[0].desiredCount
+    return response.data.result.services[0].desiredCount;
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.log(err.message);
@@ -89,12 +89,12 @@ export const createStudentService = async (
   //TODO: check if there is a version for this task def, if not, default to 1, else increase by 1
 ) => {
   try {
-    const response = await axios.post(`${BASE_URL}/services`, {
+    const response = await axios.post(`${BASE_URL}/service`, {
       data: {
         studentNames,
         cohort,
         course,
-        template
+        template,
       },
     });
     return response.data;
@@ -110,13 +110,13 @@ export const deleteService = async (service: string) => {
   try {
     // update service
     //stop any running tasks
-    const response = await axios.delete(`${BASE_URL}/services`, {
+    const response = await axios.delete(`${BASE_URL}/service`, {
       data: {
         service,
       },
     });
-    
-    console.log(response.data)
+
+    console.log(response.data);
     return response.data;
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -128,7 +128,7 @@ export const deleteService = async (service: string) => {
 // Update Service to Run Task
 export const startService = async (service: string) => {
   try {
-    const response = await axios.put(`${BASE_URL}/services/start`, {
+    const response = await axios.put(`${BASE_URL}/service/start`, {
       data: {
         service,
       },
@@ -145,7 +145,7 @@ export const startService = async (service: string) => {
 // Update Service to Stop Task
 export const stopService = async (service: string) => {
   try {
-    const response = await axios.put(`${BASE_URL}/services/stop`, {
+    const response = await axios.put(`${BASE_URL}/service/stop`, {
       data: {
         service,
       },

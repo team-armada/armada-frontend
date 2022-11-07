@@ -62,6 +62,7 @@ const useProvideAuth = (): UseAuth => {
   const signIn = async (username: string, password: string) => {
     try {
       const result = await Auth.signIn(username, password);
+      console.log(result);
       let adminStatus = false;
       flushSync(() => {
         setUsername(result.username.toLowerCase());

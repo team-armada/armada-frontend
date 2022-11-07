@@ -1,8 +1,8 @@
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 
 type Props = {
-    children?: React.ReactNode;
+  children?: React.ReactNode;
 };
 
 // Students
@@ -12,8 +12,12 @@ type Props = {
 
 // TODO: Make adjustments to check role and get current username.
 const AdminPrivateRoute: React.FC<Props> = ({ children }) => {
-    const { isAdmin, isAuthenticated } = useAuth();
-    return isAuthenticated && isAdmin ? <>{children}</> : <Navigate to="/login" />;
+  const { isAdmin, isAuthenticated } = useAuth();
+  return isAuthenticated && isAdmin ? (
+    <>{children}</>
+  ) : (
+    <Navigate to="/login" />
+  );
 };
 
 export default AdminPrivateRoute;

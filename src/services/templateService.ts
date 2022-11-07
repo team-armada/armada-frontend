@@ -36,25 +36,25 @@ export interface IVolumes {
 
 export interface IBaseTemplate {
   definition: IContainerDefinition;
-  name: string
+  name: string;
 }
 
 // Get base templates.
 export const getBaseTemplates = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/templates/base`);
+    const response = await axios.get(`${BASE_URL}/template/base`);
     return response.data.baseTemplates;
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.log(err.message);
     }
   }
-}
+};
 
 // Retrieve all templates
 export const getWorkspaceTemplates = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/templates`);
+    const response = await axios.get(`${BASE_URL}/template`);
     return response.data;
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -69,7 +69,7 @@ export const createWorkspaceTemplate = async (
   family: string
 ) => {
   try {
-    const response = await axios.post(`${BASE_URL}/templates`, {
+    const response = await axios.post(`${BASE_URL}/template`, {
       data: {
         containerDefinition,
         family,
@@ -87,7 +87,7 @@ export const createWorkspaceTemplate = async (
 export const deleteWorkspaceTemplate = async (taskDefinitionArn: string) => {
   try {
     console.log(typeof taskDefinitionArn);
-    const response = await axios.delete(`${BASE_URL}/templates`, {
+    const response = await axios.delete(`${BASE_URL}/template`, {
       data: {
         taskDefinitionArn,
       },

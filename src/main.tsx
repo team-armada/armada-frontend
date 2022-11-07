@@ -15,7 +15,7 @@ import Root from './routes/Root';
 import Home from './routes/Home';
 import Error from './routes/Error';
 import Cohort from './routes/Cohort';
-import Cohorts, { extractRelevantData } from './routes/Cohorts';
+import Cohorts from './routes/Cohorts';
 import Courses from './routes/Courses';
 import Templates from './routes/Templates';
 import Course from './routes/Course';
@@ -26,6 +26,15 @@ import AllWorkspaces from './routes/AllWorkspaces';
 import Login from './routes/Login';
 import NewWorkspace from './routes/NewWorkspace';
 import StudentPortal from './routes/StudentPortal';
+import { getAllStudents, getSpecificStudent } from './services/userService';
+import {
+  getAllCohorts,
+  getAllCoursesForCohort,
+} from './services/cohortService';
+import {
+  getAllCourses,
+  getAllStudentsForCourse,
+} from './services/courseService';
 
 const router = createBrowserRouter([
   {
@@ -85,26 +94,17 @@ const router = createBrowserRouter([
         element: <Cohorts />,
         errorElement: <Error />,
         loader: async (): Promise<string[]> => {
-          const data = await getAllServices();
-          return data.result.serviceArns;
+          const data = await getAllCohorts();
+          return data;
         },
       },
       {
-        path: '/cohorts/:cohortId',
+        path: '/cohort/:cohortId',
         element: <Cohort />,
         errorElement: <Error />,
-        loader: async (): Promise<string[]> => {
-          const data = await getAllServices();
-          return data.result.serviceArns;
-        },
-      },
-      {
-        path: '/cohorts/:cohortId/courses/:courseId',
-        element: <Course />,
-        errorElement: <Error />,
-        loader: async () => {
-          const data = await getAllServices();
-          return data.result.serviceArns;
+        loader: async ({ params }): Promise<string[]> => {
+          const data = await getAllCoursesForCohort(params.cohortId);
+          return data;
         },
       },
       {
@@ -112,8 +112,17 @@ const router = createBrowserRouter([
         element: <Courses />,
         errorElement: <Error />,
         loader: async () => {
-          const data = await getAllServices();
-          return data.result.serviceArns;
+          const data = await getAllCourses();
+          return data;
+        },
+      },
+      {
+        path: '/course/:courseId',
+        element: <Course />,
+        errorElement: <Error />,
+        loader: async ({ params }): Promise<string[]> => {
+          const data = await getAllStudentsForCourse(params.courseId);
+          return data;
         },
       },
       {
@@ -121,17 +130,17 @@ const router = createBrowserRouter([
         element: <Students />,
         errorElement: <Error />,
         loader: async () => {
-          const data = await getAllServices();
-          return data.result.serviceArns;
+          const data = await getAllStudents();
+          return data;
         },
       },
       {
-        path: '/students/:student',
+        path: '/student/:username',
         element: <Student />,
         errorElement: <Error />,
-        loader: async () => {
-          const data = await getAllServices();
-          return data.result.serviceArns;
+        loader: async ({ params }) => {
+          const data = await getSpecificStudent(params.username);
+          return data;
         },
       },
       {

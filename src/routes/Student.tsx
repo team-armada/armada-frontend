@@ -15,7 +15,6 @@ import {
   TableContainer,
 } from '@chakra-ui/react';
 
-import { extractRelevantData, filterDuplicates } from './Cohorts';
 import AdminPrivateRoute from '../components/PrivateRoutes/AdminPrivateRoute';
 
 const Student = () => {
