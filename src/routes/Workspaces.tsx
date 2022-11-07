@@ -265,17 +265,17 @@ const AllWorkspaces = () => {
 
   const start = async (name: string) => {
     await startService(name);
-    navigate('/workspaces/all');
+    navigate('/workspaces');
   };
 
   const stop = async (name: string) => {
     await stopService(name);
-    navigate('/workspaces/all');
+    navigate('/workspaces');
   };
 
   const remove = async (name: string) => {
     await deleteService(name);
-    navigate('/workspaces/all');
+    navigate('/workspaces');
   };
 
   return (
