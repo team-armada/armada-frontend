@@ -66,6 +66,18 @@ export const getStudentsNotInCohort = async (
   return response.data.result;
 };
 
+// Retrieve specific user details
+export const getStudentsInCohortNotInCourse = async (
+  cohortId: number,
+  courseId: number
+) => {
+  const response = await axios.get(
+    `${BASE_URL}/user/allStudentsNotInCourse/${cohortId}/${courseId}`
+  );
+
+  return response.data.result;
+};
+
 // Create a user
 export const createStudent = async (
   username: string,
@@ -97,5 +109,11 @@ export const getCourseStudentsWithoutWorkspaces = async (
     `${BASE_URL}/user/allStudentsWithoutWorkspaces/${courseId}`
   );
 
+  return response.data.result;
+};
+
+//Delete a user
+export const deleteStudent = async (uuid: number) => {
+  const response = await axios.delete(`${BASE_URL}/user/delete/${uuid}`);
   return response.data.result;
 };

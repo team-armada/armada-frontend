@@ -45,3 +45,32 @@ export const addCohortToCourse = async (
   const response = await axios.post(`${BASE_URL}/user/addUsersToCourse`, data);
   return response.data.result;
 };
+
+// Delete Course
+export const deleteCourse = async (courseId: number) => {
+  const response = await axios.delete(`${BASE_URL}/course/${courseId}`);
+  return response.data.result;
+};
+
+// Update Course
+export const updateCourse = async (courseId: number, name: string) => {
+  const data = {
+    data: {
+      name,
+      courseId,
+    },
+  };
+
+  const response = await axios.put(`${BASE_URL}/course/${courseId}`, data);
+  return response.data.result;
+};
+
+// Add Users to cohort.
+export const addUsersToCourse = async (relationshipArray: ICourseUser[]) => {
+  const data = {
+    data: relationshipArray,
+  };
+
+  const response = await axios.post(`${BASE_URL}/user/addUsersToCourse`, data);
+  return response.data.result;
+};

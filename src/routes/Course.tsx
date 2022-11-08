@@ -27,7 +27,6 @@ const Course = () => {
           <Thead>
             <Tr>
               <Th>Student Name</Th>
-              <Th>Workspace Status</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -39,7 +38,6 @@ const Course = () => {
                   >
                     {`${student.user.firstName} ${student.user.lastName}`}
                   </Td>
-                  <Td>Active</Td>
                 </Tr>
               );
             })}

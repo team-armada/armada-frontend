@@ -113,7 +113,7 @@ const AllWorkspaces = () => {
     );
   }
 
-  const { value, getCheckboxProps } = useCheckboxGroup({
+  let { value, getCheckboxProps } = useCheckboxGroup({
     defaultValue: [],
   });
 
@@ -136,10 +136,6 @@ const AllWorkspaces = () => {
       return result;
     });
 
-    console.log('Student', lowercaseStudents);
-    console.log('Cohort', lowerCohort);
-    console.log('Course', lowerCourse);
-
     await createStudentService(
       lowercaseStudents,
       lowerCohort,
@@ -147,6 +143,13 @@ const AllWorkspaces = () => {
       'codeServerOnly',
       selectedCourse
     );
+
+    onClose();
+
+    setSelectedCohort(0);
+    setSelectedCourse(0);
+    setStudents([]);
+    navigate('');
   };
 
   const handlePopulateCourses = async (cohortId: number) => {
@@ -265,108 +268,145 @@ const AllWorkspaces = () => {
 
   const start = async (name: string) => {
     await startService(name);
-    navigate('/workspaces');
+    navigate('');
   };
 
   const stop = async (name: string) => {
     await stopService(name);
-    navigate('/workspaces');
+    navigate('');
   };
 
   const remove = async (name: string) => {
     await deleteService(name);
-    navigate('/workspaces');
+    navigate('');
+  };
+
+  const EmptyWorkspaces = () => {
+    return <p style={{ marginTop: '20px' }}>There are no active workspaces.</p>;
+  };
+
+  const WorkspaceTable = () => {
+    return (
+      <>
+        <Flex justifyContent={'right'} mb={'20px'}>
+          <Select
+            mr={'10px'}
+            onChange={e => updateData(e.target.value)}
+            w={'20%'}
+            placeholder={'Click here to sort...'}
+          >
+            <option value="student-asc" defaultValue={'student-asc'}>
+              Sort: Student Name (ASC)
+            </option>
+            <option value="student-desc">Sort: Student Name (DESC)</option>
+            <option value="course-asc">Sort: Course (ASC)</option>
+            <option value="course-desc">Sort: Course (DESC)</option>
+            <option value="cohort-asc">Sort: Cohort (ASC)</option>
+            <option value="cohort-desc">Sort: Cohort (DESC)</option>
+          </Select>
+          <Input
+            onChange={e => filterBy(e.target.value)}
+            mr={'20px'}
+            w={'20%'}
+            placeholder="Search here..."
+          />
+        </Flex>
+
+        <TableContainer>
+          <Table>
+            <Thead>
+              <Tr>
+                <Th>Student Name</Th>
+                <Th>Cohort</Th>
+                <Th>Course</Th>
+                <Th>Actions</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {workspaces.map(workspace => {
+                const student = workspace.user;
+                const course = workspace.Course;
+                const cohort = course.cohort;
+
+                return (
+                  <Tr key={workspace.uuid}>
+                    <Td
+                      onClick={() => navigate(`/student/${student.username}`)}
+                    >{`${student.firstName} ${student.lastName}`}</Td>
+                    <Td onClick={() => navigate(`/cohort/${cohort.id}`)}>
+                      {cohort.name}
+                    </Td>
+                    <Td onClick={() => navigate(`/course/${course.id}`)}>
+                      {course.name}
+                    </Td>
+                    <Td>
+                      <Button
+                        colorScheme="facebook"
+                        mr={'10px'}
+                        disabled={workspace.desiredCount === 1}
+                        onClick={() => start(workspace.uuid)}
+                      >
+                        Start
+                      </Button>
+                      <Button
+                        colorScheme="telegram"
+                        mr={'10px'}
+                        disabled={workspace.desiredCount === 0}
+                        onClick={() => stop(workspace.uuid)}
+                      >
+                        Stop
+                      </Button>
+                      <Button
+                        colorScheme="red"
+                        mr={'10px'}
+                        disabled={workspace.desiredCount === 1}
+                        onClick={() => remove(workspace.uuid)}
+                      >
+                        Delete
+                      </Button>
+                      <Button
+                        colorScheme="green"
+                        disabled={workspace.desiredCount === 0}
+                      >
+                        Preview
+                      </Button>
+                    </Td>
+                  </Tr>
+                );
+              })}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </>
+    );
+  };
+
+  const StudentCheckboxes = () => {
+    return (
+      <>
+        {students.map(student => {
+          return (
+            <CustomCheckbox
+              key={student.uuid}
+              {...getCheckboxProps({
+                value: `${student.username}_${student.uuid}`,
+                id: `${student.firstName} ${student.lastName}`,
+              })}
+            />
+          );
+        })}
+      </>
+    );
+  };
+
+  const NoRemainingStudents = () => {
+    return <p>There are no remaining students to add to this course.</p>;
   };
 
   return (
     <AdminPrivateRoute>
       <Heading mb={'20px'}>All Workspaces</Heading>
       <Button onClick={onOpen}>Create Workspaces</Button>
-      <Flex justifyContent={'right'} mb={'20px'}>
-        <Select
-          mr={'10px'}
-          onChange={e => updateData(e.target.value)}
-          w={'20%'}
-          placeholder={'Click here to sort...'}
-        >
-          <option value="student-asc" defaultValue={'student-asc'}>
-            Sort: Student Name (ASC)
-          </option>
-          <option value="student-desc">Sort: Student Name (DESC)</option>
-          <option value="course-asc">Sort: Course (ASC)</option>
-          <option value="course-desc">Sort: Course (DESC)</option>
-          <option value="cohort-asc">Sort: Cohort (ASC)</option>
-          <option value="cohort-desc">Sort: Cohort (DESC)</option>
-        </Select>
-        <Input
-          onChange={e => filterBy(e.target.value)}
-          mr={'20px'}
-          w={'20%'}
-          placeholder="Search here..."
-        />
-      </Flex>
-
-      <TableContainer>
-        <Table>
-          <Thead>
-            <Tr>
-              <Th>Student Name</Th>
-              <Th>Cohort</Th>
-              <Th>Course</Th>
-              <Th>Actions</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {workspaces.map(workspace => {
-              const student = workspace.user;
-              const course = workspace.Course;
-              const cohort = course.cohort;
-
-              return (
-                <Tr key={workspace.uuid}>
-                  <Td
-                    onClick={() => navigate(`/student/${student.username}`)}
-                  >{`${student.firstName} ${student.lastName}`}</Td>
-                  <Td onClick={() => navigate(`/cohort/${cohort.id}`)}>
-                    {cohort.name}
-                  </Td>
-                  <Td onClick={() => navigate(`/course/${course.id}`)}>
-                    {course.name}
-                  </Td>
-                  <Td>
-                    <Button
-                      colorScheme="facebook"
-                      mr={'10px'}
-                      disabled={workspace.desiredCount === 1}
-                      onClick={() => start(workspace.uuid)}
-                    >
-                      Start
-                    </Button>
-                    <Button
-                      colorScheme="telegram"
-                      mr={'10px'}
-                      disabled={workspace.desiredCount === 0}
-                      onClick={() => stop(workspace.uuid)}
-                    >
-                      Stop
-                    </Button>
-                    <Button
-                      colorScheme="red"
-                      mr={'10px'}
-                      disabled={workspace.desiredCount === 1}
-                      onClick={() => remove(workspace.uuid)}
-                    >
-                      Delete
-                    </Button>
-                    <Button colorScheme="green">Preview</Button>
-                  </Td>
-                </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
-      </TableContainer>
-
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -398,17 +438,7 @@ const AllWorkspaces = () => {
               </Select>
               <FormLabel>Student Names</FormLabel>
               <Stack>
-                {students.map(student => {
-                  return (
-                    <CustomCheckbox
-                      key={student.uuid}
-                      {...getCheckboxProps({
-                        value: `${student.username}_${student.uuid}`,
-                        id: `${student.firstName} ${student.lastName}`,
-                      })}
-                    />
-                  );
-                })}
+                {students.length ? StudentCheckboxes() : NoRemainingStudents()}
               </Stack>
             </FormControl>
           </ModalBody>
@@ -418,12 +448,14 @@ const AllWorkspaces = () => {
               onClick={() => handleCreateWorkspaces(value)}
               colorScheme="blue"
               mr={3}
+              disabled={students.length === 0}
             >
               Create Workspaces
             </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
+      {workspaces.length ? WorkspaceTable() : EmptyWorkspaces()}
     </AdminPrivateRoute>
   );
 };

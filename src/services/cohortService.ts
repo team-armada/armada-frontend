@@ -29,7 +29,7 @@ export const getAllStudentsInCohort = async (id: number): Promise<string[]> => {
   const response = await axios.get(
     `${BASE_URL}/user/allStudentsInCohort/${id}`
   );
-  
+
   return response.data.result;
 };
 
@@ -39,12 +39,31 @@ export const getAllCoursesForCohort = async (id: number): Promise<string[]> => {
   return response.data.result;
 };
 
-//Add Users to cohort.
+// Add Users to cohort.
 export const addUsersToCohort = async (relationshipArray: ICohortUser[]) => {
   const data = {
     data: relationshipArray,
   };
 
   const response = await axios.post(`${BASE_URL}/user/addUsersToCohort`, data);
+  return response.data.result;
+};
+
+// Delete Cohort
+export const deleteCohort = async (cohortId: number) => {
+  const response = await axios.delete(`${BASE_URL}/cohort/${cohortId}`);
+  return response.data.result;
+};
+
+// Update Cohort
+export const updateCohort = async (cohortId: number, name: string) => {
+  const data = {
+    data: {
+      name,
+      cohortId,
+    },
+  };
+
+  const response = await axios.put(`${BASE_URL}/cohort/${cohortId}`, data);
   return response.data.result;
 };

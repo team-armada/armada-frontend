@@ -19,15 +19,13 @@ const Cohort = () => {
   const cohort = data.cohort;
   const courses = data.courses;
 
-  return (
-    <AdminPrivateRoute>
-      <Heading>Cohort: {`${cohort.name}`}</Heading>
+  const CourseTable = () => {
+    return (
       <TableContainer>
         <Table>
           <Thead>
             <Tr>
               <Th>Course Name</Th>
-              <Th>Course Status</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -37,13 +35,23 @@ const Cohort = () => {
                   <Td onClick={e => navigate(`/course/${course.id}`)}>
                     {course.name}
                   </Td>
-                  <Td>Active</Td>
                 </Tr>
               );
             })}
           </Tbody>
         </Table>
       </TableContainer>
+    );
+  };
+
+  const emptyCourses = () => {
+    return <p>There are no courses associated with the current cohort.</p>;
+  };
+
+  return (
+    <AdminPrivateRoute>
+      <Heading>Cohort: {`${cohort.name}`}</Heading>
+      {courses.length ? CourseTable() : emptyCourses()}
     </AdminPrivateRoute>
   );
 };

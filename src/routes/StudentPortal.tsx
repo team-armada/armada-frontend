@@ -19,7 +19,7 @@ const StudentPortal = () => {
   let data = useLoaderData();
   const navigate = useNavigate();
 
-  const workspaces = data.user.workspaces;
+  const workspaces = data.workspaces;
 
   // TODO: Implement on-click for workspace connect button.
 
@@ -44,18 +44,8 @@ const StudentPortal = () => {
             {workspaces.map(workspace => {
               return (
                 <Tr key={workspace.uuid}>
-                  <Td
-                    onClick={() =>
-                      navigate(`/cohort/${workspace.Course.cohort.id}`)
-                    }
-                  >
-                    {workspace.Course.cohort.name}
-                  </Td>
-                  <Td
-                    onClick={() => navigate(`/course/${workspace.Course.id}`)}
-                  >
-                    {workspace.Course.name}
-                  </Td>
+                  <Td>{workspace.Course.cohort.name}</Td>
+                  <Td>{workspace.Course.name}</Td>
                   <Td>
                     <Button
                       colorScheme="facebook"

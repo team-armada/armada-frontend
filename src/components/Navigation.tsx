@@ -63,10 +63,10 @@ interface MobileProps extends FlexProps {
 
 const LinkItems: Array<LinkItemProps> = [
   { name: 'Home', icon: FiHome, destination: '/' },
-  { name: 'Workspaces', icon: AiOutlineDesktop, destination: '/workspaces' },
+  { name: 'Students', icon: FiUsers, destination: '/students' },
   { name: 'Cohorts', icon: HiOutlineUserGroup, destination: '/cohorts' },
   { name: 'Courses', icon: GiBookshelf, destination: '/courses' },
-  { name: 'Students', icon: FiUsers, destination: '/students' },
+  { name: 'Workspaces', icon: AiOutlineDesktop, destination: '/workspaces' },
 ];
 
 export default function SidebarWithHeader({
@@ -236,13 +236,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                   name={`${firstName} ${lastName}`}
                   color="white"
                   size={'sm'}
-                  bgColor="indigo"
-                  // 5f1b8c Purple
-                  // #5cb8e4 SkyBlue
-                  // src={
-                  //   'https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
-                  // }
-                  // src='src/assets/Logo files/PNGs - SVGs/ship(5).png'
+                  bgColor="#6aa9fd"
                 />
                 <VStack
                   display={{ base: 'none', md: 'flex' }}
@@ -266,9 +260,9 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               bg={useColorModeValue('white', 'white')}
               borderColor={useColorModeValue('gray.200', 'gray.700')}
             >
-              <MenuItem onClick={() => handleChangePassword()}>
+              {/* <MenuItem onClick={() => handleChangePassword()}>
                 Change Password
-              </MenuItem>
+              </MenuItem> */}
               <MenuItem onClick={() => handleSignOut()}>Sign Out</MenuItem>
             </MenuList>
           </Menu>

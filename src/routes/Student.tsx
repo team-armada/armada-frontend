@@ -19,47 +19,17 @@ const Student = () => {
   const data = useLoaderData();
   const navigate = useNavigate();
 
-  const student = data.user;
-  const cohorts = data.cohorts;
-  const courses = data.courses;
+  console.log(data);
+
+  const student = data;
+  const cohorts = data.user_cohort;
+  const courses = data.user_course;
   const fullName = `${student.firstName} ${student.lastName}`;
-
-  const cohortLookup = (cohortId: number): string => {
-    const cohort = cohorts.find(cohort => cohortId === cohort.id);
-    return cohort.name;
-  };
-
-  const StudentCohortTable = () => {
-    return (
-      <TableContainer mt={'20px'}>
-        <Table>
-          <Thead>
-            <Tr>
-              <Th>Cohort Name</Th>
-              <Th>Cohort Status</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {cohorts.map(cohort => {
-              return (
-                <Tr key={cohort.id}>
-                  <Td onClick={e => navigate(`/cohort/${cohort.id}`)}>
-                    {cohort.name}
-                  </Td>
-                  <Td>Active</Td>
-                </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
-      </TableContainer>
-    );
-  };
 
   const StudentCourseTable = () => {
     return (
       <TableContainer mt={'20px'}>
-        <Table>
+        <Table variant="simple">
           <Thead>
             <Tr>
               <Th>Course Name</Th>
@@ -69,12 +39,14 @@ const Student = () => {
           <Tbody>
             {courses.map(course => {
               return (
-                <Tr key={`${course.id}`}>
-                  <Td onClick={e => navigate(`/course/${course.id}`)}>
-                    {course.name}
+                <Tr key={`${course.course.id}`}>
+                  <Td onClick={e => navigate(`/course/${course.course.id}`)}>
+                    {course.course.name}
                   </Td>
-                  <Td onClick={e => navigate(`/cohort/${course.cohortId}`)}>
-                    {cohortLookup(course.cohortId)}
+                  <Td
+                    onClick={e => navigate(`/cohort/${course.course.cohortId}`)}
+                  >
+                    {course.course.cohort.name}
                   </Td>
                 </Tr>
               );
@@ -96,14 +68,6 @@ const Student = () => {
   return (
     <AdminPrivateRoute>
       <Heading>{fullName}</Heading>
-      <Center>
-        <Heading size="lg">Cohorts</Heading>
-      </Center>
-      {cohorts.length ? StudentCohortTable() : ZeroActive('cohorts')}
-      <Divider mt="60px" mb="60px" />
-      <Center>
-        <Heading size="lg">Courses</Heading>
-      </Center>
       {courses.length ? StudentCourseTable() : ZeroActive('courses')}
     </AdminPrivateRoute>
   );

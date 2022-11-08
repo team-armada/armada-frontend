@@ -1,6 +1,5 @@
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import EmptyWorkspaces from '../components/EmptyWorkspaces';
 
 import {
   Heading,
@@ -37,7 +36,12 @@ import {
 } from '@chakra-ui/react';
 
 import AdminPrivateRoute from '../components/PrivateRoutes/AdminPrivateRoute';
-import { addUsersToCohort, createCohort } from '../services/cohortService';
+import {
+  addUsersToCohort,
+  createCohort,
+  deleteCohort,
+  updateCohort,
+} from '../services/cohortService';
 import { getStudentsNotInCohort } from '../services/userService';
 
 export interface ICohort {
@@ -49,11 +53,10 @@ export interface ICohort {
 }
 
 const CreateCohortModal = ({ setCohortName, cohortName }) => {
+  const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleCreateCohort = async () => {
-    console.log('creating cohort');
-
     //create cohort service
     await createCohort(cohortName);
 
@@ -62,6 +65,9 @@ const CreateCohortModal = ({ setCohortName, cohortName }) => {
 
     // Reset Modal
     setCohortName('');
+
+    // Refresh Page
+    navigate('');
   };
 
   return (
@@ -104,8 +110,6 @@ const AddStudentsModal = ({ cohortId }) => {
 
   const populateStudents = async () => {
     const populatedStudents = await getStudentsNotInCohort(cohortId);
-
-    console.log(populatedStudents);
     setStudents(populatedStudents);
     onOpen();
   };
@@ -149,7 +153,7 @@ const AddStudentsModal = ({ cohortId }) => {
     );
   }
 
-  const { value, getCheckboxProps } = useCheckboxGroup({
+  let { value, getCheckboxProps } = useCheckboxGroup({
     defaultValue: [],
   });
 
@@ -164,9 +168,31 @@ const AddStudentsModal = ({ cohortId }) => {
       };
     });
 
-    console.log(relationships);
-
     await addUsersToCohort(relationships);
+
+    onClose();
+  };
+
+  const StudentCheckboxes = () => {
+    return (
+      <>
+        {students.map(student => {
+          return (
+            <CustomCheckbox
+              key={student.uuid}
+              {...getCheckboxProps({
+                value: student.uuid,
+                id: `${student.firstName} ${student.lastName}`,
+              })}
+            />
+          );
+        })}
+      </>
+    );
+  };
+
+  const NoRemainingStudents = () => {
+    return <p>There are no remaining students to add.</p>;
   };
 
   return (
@@ -187,18 +213,7 @@ const AddStudentsModal = ({ cohortId }) => {
             <FormControl>
               <FormLabel>Student Names</FormLabel>
               <Stack>
-                {/* HOW TO GET CHECKBOX DATA?  --> useCheckbox */}
-                {students.map(student => {
-                  return (
-                    <CustomCheckbox
-                      key={student.uuid}
-                      {...getCheckboxProps({
-                        value: student.uuid,
-                        id: `${student.firstName} ${student.lastName}`,
-                      })}
-                    />
-                  );
-                })}
+                {students.length ? StudentCheckboxes() : NoRemainingStudents()}
               </Stack>
             </FormControl>
           </ModalBody>
@@ -208,8 +223,9 @@ const AddStudentsModal = ({ cohortId }) => {
               onClick={() => handleAddStudents(cohortId, value)}
               colorScheme="blue"
               mr={3}
+              disabled={students.length === 0}
             >
-              Create Cohort
+              Add Students
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -219,18 +235,100 @@ const AddStudentsModal = ({ cohortId }) => {
 };
 
 // TODO: Add Update Cohort Functionality.
-// const UpdateCohortModal = () => {
-//   return (
+const UpdateCohortModal = ({ cohortId, cohortName }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
+  const [newName, setNewName] = useState('');
 
-//   )
-// };
+  const handleUpdateName = async (cohortId: number) => {
+    const response = await updateCohort(cohortId, newName);
 
-// TODO: Add Delete Cohort Functionality.
-// const DeleteCohortModal = () => {
-//   return (
+    onClose();
+    setNewName('');
+    // Refresh Page
+    navigate('');
+  };
 
-//   )
-// }
+  return (
+    <>
+      <Button onClick={onOpen} colorScheme="telegram" mr={'10px'}>
+        Update
+      </Button>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{`Update Cohort: ${cohortName}`}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Cohort Name</FormLabel>
+              <Input onChange={e => setNewName(e.target.value)} type="text" />
+            </FormControl>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              onClick={() => handleUpdateName(cohortId)}
+              colorScheme="blue"
+              mr={3}
+              disabled={newName.length === 0}
+            >
+              Update Name
+            </Button>
+            <Button onClick={() => onClose()} colorScheme="blue" mr={3}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+};
+
+const DeleteCohortModal = ({ cohortId, cohortName }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
+
+  const handleDeleteCohort = async (cohortId: number) => {
+    const response = await deleteCohort(cohortId);
+
+    onClose();
+
+    // Refresh Page
+    navigate('');
+  };
+
+  return (
+    <>
+      <Button onClick={onOpen} colorScheme="red" mr={'10px'}>
+        Delete
+      </Button>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{`Delete Cohort: ${cohortName}`}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            Are you sure you want to delete this cohort? This will delete all
+            associated courses.
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              onClick={() => handleDeleteCohort(cohortId)}
+              colorScheme="red"
+              mr={3}
+            >
+              Delete
+            </Button>
+            <Button onClick={() => onClose()} colorScheme="blue" mr={3}>
+              Cancel
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+};
 
 const Cohorts = () => {
   const [cohortName, setCohortName] = useState('');
@@ -260,12 +358,14 @@ const Cohorts = () => {
                   </Td>
                   <Td>
                     <AddStudentsModal cohortId={cohort.id} />
-                    <Button colorScheme="telegram" mr={'10px'}>
-                      Update
-                    </Button>
-                    <Button colorScheme="red" mr={'10px'}>
-                      Delete
-                    </Button>
+                    <UpdateCohortModal
+                      cohortId={cohort.id}
+                      cohortName={cohort.name}
+                    />
+                    <DeleteCohortModal
+                      cohortId={cohort.id}
+                      cohortName={cohort.name}
+                    />
                   </Td>
                 </Tr>
               );
@@ -276,39 +376,18 @@ const Cohorts = () => {
     );
   };
 
+  const EmptyCohorts = () => {
+    return <p style={{ marginTop: '20px' }}>There are no active cohorts.</p>;
+  };
+
   return (
     <AdminPrivateRoute>
       <Heading mb={'20px'}>All Cohorts</Heading>
-      {cohorts.length ? CohortTable() : EmptyWorkspaces('cohorts')}
-
       <CreateCohortModal
         setCohortName={setCohortName}
         cohortName={cohortName}
       />
-
-      {/* <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Add Students</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl>
-              <FormLabel>Student Name</FormLabel>
-              <Input type="checkbox" />
-            </FormControl>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button
-              onClick={() => handleAddStudents()}
-              colorScheme="blue"
-              mr={3}
-            >
-              Create Cohort
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal> */}
+      {cohorts.length ? CohortTable() : EmptyCohorts()}
     </AdminPrivateRoute>
   );
 };
