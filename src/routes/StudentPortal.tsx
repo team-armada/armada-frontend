@@ -56,6 +56,8 @@ const StudentPortal = () => {
                       Resume
                     </Button>
                     <Button
+                      as="a"
+                      href={`http://${amazon_url}/${workspace.uuid}/home/coder`}
                       colorScheme="telegram"
                       mr={'10px'}
                       disabled={workspace.desiredCount === 0}
