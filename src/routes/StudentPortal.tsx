@@ -57,7 +57,7 @@ const StudentPortal = () => {
                     </Button>
                     <Button
                       as="a"
-                      href={`http://${amazon_url}/${workspace.uuid}/home/coder`}
+                      href={workspace.website}
                       colorScheme="telegram"
                       mr={'10px'}
                       disabled={workspace.desiredCount === 0}

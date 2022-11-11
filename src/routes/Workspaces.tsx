@@ -369,7 +369,7 @@ const AllWorkspaces = () => {
                         as="a"
                         colorScheme="green"
                         disabled={workspace.desiredCount === 0}
-                        href={`http://ArmadaLoadBalancer-1280959169.us-east-1.elb.amazonaws.com/${workspace.uuid}/?folder=/home/coder`}
+                        href={workspace.website}
                       >
                         Preview
                       </Button>
