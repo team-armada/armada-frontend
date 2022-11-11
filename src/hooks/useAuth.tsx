@@ -8,7 +8,6 @@ let config;
 
 export async function getConfig() {
   config = await getAuthObject();
-  console.log(config);
   return 'Success';
 }
 
