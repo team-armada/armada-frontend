@@ -134,3 +134,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     </ChakraProvider>
   </React.StrictMode>
 );
+function getConfig() {
+  throw new Error('Function not implemented.');
+}

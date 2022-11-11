@@ -1,10 +1,20 @@
 import Amplify, { Auth } from 'aws-amplify';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { AwsConfigAuth } from '../auth';
+import { getAuthObject } from '../services/authService';
 import { getSpecificStudent } from '../services/userService';
 
-Amplify.configure({ Auth: AwsConfigAuth });
+let config;
+
+export async function getConfig() {
+  config = await getAuthObject();
+  console.log(config);
+  return 'Success';
+}
+
+await getConfig();
+
+Amplify.configure({ Auth: config });
 
 interface UseAuth {
   isAdmin: boolean;
