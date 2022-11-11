@@ -61,6 +61,7 @@ const StudentPortal = () => {
                       colorScheme="telegram"
                       mr={'10px'}
                       disabled={workspace.desiredCount === 0}
+                      target="_blank"
                     >
                       Connect
                     </Button>

@@ -370,6 +370,7 @@ const AllWorkspaces = () => {
                         colorScheme="green"
                         disabled={workspace.desiredCount === 0}
                         href={workspace.website}
+                        target="_blank"
                       >
                         Preview
                       </Button>

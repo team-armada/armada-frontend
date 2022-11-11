@@ -2,6 +2,10 @@ td {
   cursor: pointer;
 }
 
+ol {
+  margin-top: 0px;
+}
+
 ol > li {
   margin-top: 10px;
   margin-left: 20px;

@@ -14,6 +14,8 @@ import {
   createIcon,
   IconProps,
   useColorModeValue,
+  ListItem,
+  OrderedList,
 } from '@chakra-ui/react';
 
 export default function Home() {
@@ -55,17 +57,25 @@ export default function Home() {
                 instantly!
               </Text>
             </Heading>
-            <Text color={'gray.700'}>
-              To get started creating developer environments, use the following
-              workflow:
-              <ol>
-                <li>Create accounts for each one of your students.</li>
-                <li>Create a cohort for a group of students.</li>
-                <li>Assign students to a specific cohort group.</li>
-                <li>Create a course using the cohort you've created.</li>
-                <li>Deploy workspaces for every student within the course.</li>
-              </ol>
-            </Text>
+            <Flex flexDirection={'column'}>
+              <Text marginBottom="0px" color={'gray.700'}>
+                To get started creating developer environments, use the
+                following workflow:
+              </Text>
+              <OrderedList>
+                <ListItem>
+                  Create accounts for each one of your students.
+                </ListItem>
+                <ListItem>Create a cohort for a group of students.</ListItem>
+                <ListItem>Assign students to a specific cohort group.</ListItem>
+                <ListItem>
+                  Create a course using the cohort you've created.
+                </ListItem>
+                <ListItem>
+                  Deploy workspaces for every student within the course.
+                </ListItem>
+              </OrderedList>
+            </Flex>
 
             <Stack
               spacing={{ base: 4, sm: 6 }}
