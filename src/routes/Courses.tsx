@@ -54,14 +54,11 @@ const AddStudentsModal = ({ cohortId, courseId }) => {
   // const { getLabelProps } = useCheckbox(props);
 
   const populateStudents = async () => {
-    console.log('Cohort Id', cohortId);
-    console.log('Course Id', courseId);
     const populatedStudents = await getStudentsInCohortNotInCourse(
       cohortId,
       courseId
     );
 
-    console.log('Students', populatedStudents);
     setStudents(populatedStudents);
     onOpen();
   };
@@ -194,7 +191,6 @@ const UpdateCourseModal = ({ courseId, courseName }) => {
 
   const handleUpdateName = async (courseId: number) => {
     const response = await updateCourse(courseId, newName);
-    console.log('updating course');
 
     onClose();
     setNewName('');
@@ -296,7 +292,6 @@ const Courses = () => {
   const handleCreateCourse = async () => {
     // Create a course
     const course = await createCourse(courseName, Number(selectedCohort));
-    console.log(course);
 
     // Populate Course with students from selected cohort
     const students = await getAllStudentsInCohort(Number(selectedCohort));

@@ -118,7 +118,6 @@ export const deleteService = async (service: string) => {
       },
     });
 
-    console.log(response.data);
     return response.data;
   } catch (err: unknown) {
     if (err instanceof Error) {

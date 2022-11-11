@@ -86,7 +86,6 @@ export const createWorkspaceTemplate = async (
 // Delete a template
 export const deleteWorkspaceTemplate = async (taskDefinitionArn: string) => {
   try {
-    console.log(typeof taskDefinitionArn);
     const response = await axios.delete(`${BASE_URL}/template`, {
       data: {
         taskDefinitionArn,

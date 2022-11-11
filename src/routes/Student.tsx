@@ -19,8 +19,6 @@ const Student = () => {
   const data = useLoaderData();
   const navigate = useNavigate();
 
-  console.log(data);
-
   const student = data;
   const cohorts = data.user_cohort;
   const courses = data.user_course;
