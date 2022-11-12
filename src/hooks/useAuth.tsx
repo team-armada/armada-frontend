@@ -1,8 +1,10 @@
-import Amplify, { Auth } from 'aws-amplify';
+import * as aws_amplify_core from '@aws-amplify/core';
+import { Auth } from '@aws-amplify/auth';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { getAuthObject } from '../services/authService';
 import { getSpecificStudent } from '../services/userService';
+const Amplify = aws_amplify_core.Amplify;
 
 let config;
 

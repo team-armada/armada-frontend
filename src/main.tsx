@@ -8,7 +8,7 @@ import './reset.css';
 
 import { ProvideAuth } from './hooks/useAuth';
 
-import { describeService, getAllServices } from './services/studentService';
+import { getAllServices } from './services/studentService';
 
 import Root from './routes/Root';
 import Home from './routes/Home';
@@ -19,7 +19,7 @@ import Courses from './routes/Courses';
 import Course from './routes/Course';
 import Student from './routes/Student';
 import Students from './routes/Students';
-import AllWorkspaces from './routes/Workspaces';
+import Workspaces from './routes/Workspaces';
 import Login from './routes/Login';
 import StudentPortal from './routes/StudentPortal';
 import { getAllStudents, getSpecificStudent } from './services/userService';
@@ -45,7 +45,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/workspaces',
-        element: <AllWorkspaces />,
+        element: <Workspaces />,
         errorElement: <Error />,
         loader: async () => {
           const data = await getAllServices();
@@ -56,7 +56,7 @@ const router = createBrowserRouter([
         path: '/cohorts',
         element: <Cohorts />,
         errorElement: <Error />,
-        loader: async (): Promise<string[]> => {
+        loader: async () => {
           const data = await getAllCohorts();
           return data;
         },
@@ -65,8 +65,8 @@ const router = createBrowserRouter([
         path: '/cohort/:cohortId',
         element: <Cohort />,
         errorElement: <Error />,
-        loader: async ({ params }): Promise<string[]> => {
-          const data = await getAllCoursesForCohort(params.cohortId);
+        loader: async ({ params }) => {
+          const data = await getAllCoursesForCohort(Number(params.cohortId));
           return data;
         },
       },
@@ -83,8 +83,8 @@ const router = createBrowserRouter([
         path: '/course/:courseId',
         element: <Course />,
         errorElement: <Error />,
-        loader: async ({ params }): Promise<string[]> => {
-          const data = await getAllStudentsForCourse(params.courseId);
+        loader: async ({ params }) => {
+          const data = await getAllStudentsForCourse(Number(params.courseId));
           return data;
         },
       },
@@ -102,6 +102,9 @@ const router = createBrowserRouter([
         element: <Student />,
         errorElement: <Error />,
         loader: async ({ params }) => {
+          if (!params.username) {
+            throw Error();
+          }
           const data = await getSpecificStudent(params.username);
           return data;
         },
@@ -111,6 +114,10 @@ const router = createBrowserRouter([
         element: <StudentPortal />,
         errorElement: <Error />,
         loader: async ({ params }) => {
+          if (!params.username) {
+            throw Error();
+          }
+
           const data = await getSpecificStudent(params.username);
           return data;
         },
@@ -133,6 +140,3 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     </ChakraProvider>
   </React.StrictMode>
 );
-function getConfig() {
-  throw new Error('Function not implemented.');
-}

@@ -47,11 +47,17 @@ import {
   getAllStudentsInCohort,
 } from '../services/cohortService';
 import { getStudentsInCohortNotInCourse } from '../services/userService';
+import { ICohort, ICourse, IUser } from '../utils/types';
 
-const AddStudentsModal = ({ cohortId, courseId }) => {
+const AddStudentsModal = ({
+  cohortId,
+  courseId,
+}: {
+  cohortId: number;
+  courseId: number;
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [students, setStudents] = useState([]);
-  // const { getLabelProps } = useCheckbox(props);
+  const [students, setStudents] = useState<IUser[]>([]);
 
   const populateStudents = async () => {
     const populatedStudents = await getStudentsInCohortNotInCourse(
@@ -63,7 +69,7 @@ const AddStudentsModal = ({ cohortId, courseId }) => {
     onOpen();
   };
 
-  function CustomCheckbox(props) {
+  function CustomCheckbox(props: any) {
     const { state, getCheckboxProps, getInputProps, getLabelProps, htmlProps } =
       useCheckbox(props);
 
@@ -170,7 +176,7 @@ const AddStudentsModal = ({ cohortId, courseId }) => {
 
           <ModalFooter>
             <Button
-              onClick={() => handleAddStudents(cohortId, value)}
+              onClick={() => handleAddStudents(cohortId, value as string[])}
               colorScheme="blue"
               mr={3}
               disabled={value.length === 0}
@@ -184,7 +190,13 @@ const AddStudentsModal = ({ cohortId, courseId }) => {
   );
 };
 
-const UpdateCourseModal = ({ courseId, courseName }) => {
+const UpdateCourseModal = ({
+  courseId,
+  courseName,
+}: {
+  courseId: number;
+  courseName: string;
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
   const [newName, setNewName] = useState('');
@@ -234,7 +246,13 @@ const UpdateCourseModal = ({ courseId, courseName }) => {
   );
 };
 
-const DeleteCourseModal = ({ courseId, courseName }) => {
+const DeleteCourseModal = ({
+  courseId,
+  courseName,
+}: {
+  courseId: number;
+  courseName: string;
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
 
@@ -280,7 +298,12 @@ const DeleteCourseModal = ({ courseId, courseName }) => {
 };
 
 const Courses = () => {
-  const data = useLoaderData();
+  const data = useLoaderData() as {
+    courses: (ICourse & {
+      cohort: ICohort;
+    })[];
+    cohorts: ICohort[];
+  };
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [courseName, setCourseName] = useState('');
@@ -381,7 +404,7 @@ const Courses = () => {
               />
               <FormLabel>Cohort</FormLabel>
               <Select
-                onChange={e => setSelectedCohort(e.target.value)}
+                onChange={e => setSelectedCohort(Number(e.target.value))}
                 placeholder="Select cohort"
               >
                 {cohorts.map(cohort => (

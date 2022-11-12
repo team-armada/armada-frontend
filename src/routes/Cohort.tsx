@@ -8,12 +8,13 @@ import {
   Tr,
   Td,
 } from '@chakra-ui/react';
-import { useLoaderData, useNavigate, useLocation } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import AdminPrivateRoute from '../components/PrivateRoutes/AdminPrivateRoute';
+import { ICohort, ICourse } from '../utils/types';
 
 //get list of courses from the cohort
 const Cohort = () => {
-  const data = useLoaderData();
+  const data = useLoaderData() as { cohort: ICohort; courses: ICourse[] };
   const navigate = useNavigate();
 
   const cohort = data.cohort;

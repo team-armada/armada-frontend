@@ -2,7 +2,6 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 
 import {
   Center,
-  Divider,
   Heading,
   Table,
   Thead,
@@ -14,13 +13,35 @@ import {
 } from '@chakra-ui/react';
 
 import AdminPrivateRoute from '../components/PrivateRoutes/AdminPrivateRoute';
+import {
+  ICohort,
+  ICourse,
+  IUser,
+  IUser_Cohort,
+  IUser_Course,
+  IWorkspace,
+} from '../utils/types';
 
 const Student = () => {
-  const data = useLoaderData();
+  const data = useLoaderData() as IUser & {
+    user_cohort: (IUser_Cohort & {
+      cohort: ICohort;
+    })[];
+    user_course: (IUser_Course & {
+      course: ICourse & {
+        cohort: ICohort;
+      };
+    })[];
+    workspaces: (IWorkspace & {
+      course: ICourse & {
+        cohort: ICohort;
+      };
+    })[];
+  };
+
   const navigate = useNavigate();
 
   const student = data;
-  const cohorts = data.user_cohort;
   const courses = data.user_course;
   const fullName = `${student.firstName} ${student.lastName}`;
 

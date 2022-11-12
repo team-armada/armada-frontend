@@ -37,8 +37,7 @@ import { GiBookshelf } from 'react-icons/gi';
 import { AiOutlineDesktop } from 'react-icons/ai';
 import { HiOutlineUserGroup } from 'react-icons/hi';
 import { IconType } from 'react-icons';
-import { TbSailboat } from 'react-icons/tb';
-import { ReactText } from 'react';
+import { ReactNode, ReactText } from 'react';
 import { useAuth } from '../hooks/useAuth';
 
 interface LinkItemProps {
@@ -95,7 +94,6 @@ export default function SidebarWithHeader({
           <SidebarContent onClose={onClose} />
         </DrawerContent>
       </Drawer>
-      {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
       <Box ml={{ base: 0, md: 60 }} p="4">
         {children}
@@ -155,11 +153,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 
 const NavItem = ({ icon, children, destination, ...rest }: NavItemProps) => {
   return (
-    <Link
-      to={destination}
-      style={{ textDecoration: 'none' }}
-      _focus={{ boxShadow: 'none' }}
-    >
+    <Link to={destination} style={{ textDecoration: 'none' }}>
       <Flex
         align="center"
         color="white"
@@ -197,10 +191,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const handleSignOut = () => {
     signOut();
     navigate('/login');
-  };
-
-  const handleChangePassword = () => {
-    // TODO: Implement!
   };
 
   return (
@@ -260,9 +250,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               bg={useColorModeValue('white', 'white')}
               borderColor={useColorModeValue('gray.200', 'gray.700')}
             >
-              {/* <MenuItem onClick={() => handleChangePassword()}>
-                Change Password
-              </MenuItem> */}
               <MenuItem onClick={() => handleSignOut()}>Sign Out</MenuItem>
             </MenuList>
           </Menu>

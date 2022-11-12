@@ -1,12 +1,13 @@
 import axios from 'axios';
-
-interface ICourseUser {
-  courseId: number;
-  userId: string;
-}
+import { ICohort, ICourse, IUser, IUser_Course } from '../utils/types';
 
 // Retrieve All Courses
-export const getAllCourses = async (): Promise<string[]> => {
+export const getAllCourses = async (): Promise<{
+  courses: (ICourse & {
+    cohort: ICohort;
+  })[];
+  cohorts: ICohort[];
+}> => {
   const response = await axios.get(`/course/all`);
   return response.data.result;
 };
@@ -14,7 +15,12 @@ export const getAllCourses = async (): Promise<string[]> => {
 // Retrieve a Specific Course
 export const getAllStudentsForCourse = async (
   id: number
-): Promise<string[]> => {
+): Promise<{
+  course: ICourse;
+  students: (IUser_Course & {
+    user: IUser;
+  })[];
+}> => {
   const response = await axios.get(`/course/${id}`);
   return response.data.result;
 };
@@ -23,7 +29,7 @@ export const getAllStudentsForCourse = async (
 export const createCourse = async (
   name: string,
   cohortId: number
-): Promise<string[]> => {
+): Promise<ICourse> => {
   const data = {
     data: {
       name,
@@ -35,9 +41,7 @@ export const createCourse = async (
 };
 
 //Add Cohort Students to Course
-export const addCohortToCourse = async (
-  cohortStudents: ICourseUser[]
-): Promise<string[]> => {
+export const addCohortToCourse = async (cohortStudents: IUser_Course[]) => {
   const data = {
     data: cohortStudents,
   };
@@ -46,13 +50,16 @@ export const addCohortToCourse = async (
 };
 
 // Delete Course
-export const deleteCourse = async (courseId: number) => {
+export const deleteCourse = async (courseId: number): Promise<ICourse> => {
   const response = await axios.delete(`/course/${courseId}`);
   return response.data.result;
 };
 
 // Update Course
-export const updateCourse = async (courseId: number, name: string) => {
+export const updateCourse = async (
+  courseId: number,
+  name: string
+): Promise<ICourse> => {
   const data = {
     data: {
       name,
@@ -65,7 +72,7 @@ export const updateCourse = async (courseId: number, name: string) => {
 };
 
 // Add Users to cohort.
-export const addUsersToCourse = async (relationshipArray: ICourseUser[]) => {
+export const addUsersToCourse = async (relationshipArray: IUser_Course[]) => {
   const data = {
     data: relationshipArray,
   };

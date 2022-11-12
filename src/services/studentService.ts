@@ -1,37 +1,18 @@
 import axios from 'axios';
 
-export interface PortSettings {
-  containerPort: number;
-  hostPort: number;
-  protocol: string;
-}
+import {
+  CreateServiceCommandOutput,
+  DeleteServiceCommandOutput,
+  UpdateServiceCommandOutput,
+} from '@aws-sdk/client-ecs';
 
-export interface ContainerSettings {
-  name: string;
-  image: string;
-  memory: number;
-  portMappings: PortSettings[];
-  mountPoints: IMountSettings[];
-}
-
-export interface IMountSettings {
-  containerPath: string;
-  sourceVolume: string;
-}
-
-export interface IContainerDefinition {
-  containerDefinition: ContainerSettings[];
-  family?: string;
-  volumes?: IVolumes[];
-}
-
-export interface IVolumes {
-  efsVolumeConfiguration: {
-    fileSystemId: string;
-    rootDirectory: string;
-  };
-  name: string;
-}
+import {
+  ICohort,
+  ICourse,
+  IContainerDefinition,
+  IUser,
+  IWorkspace,
+} from '../utils/types';
 
 export const coderServerOnly: IContainerDefinition = {
   containerDefinition: [
@@ -57,7 +38,15 @@ export const coderServerOnly: IContainerDefinition = {
 };
 
 // Retrieve all services
-export const getAllServices = async () => {
+export const getAllServices = async (): Promise<
+  | (IWorkspace & {
+      user: IUser;
+      Course: ICourse & {
+        cohort: ICohort;
+      };
+    })[]
+  | undefined
+> => {
   try {
     const response = await axios.get(`/service/all`);
     return response.data.result;
@@ -68,7 +57,9 @@ export const getAllServices = async () => {
   }
 };
 
-export const describeService = async (service: string) => {
+export const describeService = async (
+  service: string
+): Promise<number | undefined> => {
   try {
     const response = await axios.get(`/service/${service}`);
     return response.data.result.services[0].desiredCount;
@@ -81,17 +72,19 @@ export const describeService = async (service: string) => {
 
 // Create a service.
 export const createStudentService = async (
-  studentNames: string[],
+  studentValues: {
+    username: string;
+    uuid: string;
+  }[],
   cohort: string,
   course: string,
-  template: string, //codeServerOnly or coderServerPG
+  template: string,
   courseId: number
-  //TODO: check if there is a version for this task def, if not, default to 1, else increase by 1
-) => {
+): Promise<CreateServiceCommandOutput | undefined> => {
   try {
     const response = await axios.post(`/service/create`, {
       data: {
-        studentNames,
+        studentNames: studentValues,
         cohort,
         course,
         template,
@@ -107,7 +100,9 @@ export const createStudentService = async (
 };
 
 // Delete a service; if task was started, need to update service def to desiredCount 0, stop task (maybe), THEN stop service
-export const deleteService = async (service: string) => {
+export const deleteService = async (
+  service: string
+): Promise<DeleteServiceCommandOutput | undefined> => {
   try {
     // update service
     //stop any running tasks
@@ -126,7 +121,9 @@ export const deleteService = async (service: string) => {
 };
 
 // Update Service to Run Task
-export const startService = async (service: string) => {
+export const startService = async (
+  service: string
+): Promise<UpdateServiceCommandOutput | undefined> => {
   try {
     const response = await axios.put(`/service/start`, {
       data: {
@@ -143,7 +140,9 @@ export const startService = async (service: string) => {
 };
 
 // Update Service to Stop Task
-export const stopService = async (service: string) => {
+export const stopService = async (
+  service: string
+): Promise<UpdateServiceCommandOutput | undefined> => {
   try {
     const response = await axios.put(`/service/stop`, {
       data: {

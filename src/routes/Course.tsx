@@ -10,11 +10,16 @@ import {
   TableContainer,
 } from '@chakra-ui/react';
 import AdminPrivateRoute from '../components/PrivateRoutes/AdminPrivateRoute';
-import EmptyWorkspaces from '../components/EmptyWorkspaces';
 import EmptyStudents from '../components/EmptyStudents';
+import { ICourse, IUser, IUser_Course } from '../utils/types';
 
 const Course = () => {
-  const data = useLoaderData();
+  const data = useLoaderData() as {
+    course: ICourse;
+    students: (IUser_Course & {
+      user: IUser;
+    })[];
+  };
   const navigate = useNavigate();
 
   const course = data.course;
@@ -50,7 +55,7 @@ const Course = () => {
   return (
     <AdminPrivateRoute>
       <Heading>Course Name: {course.name}</Heading>
-      {students.length ? StudentsTable() : EmptyStudents('students')}
+      {students.length ? StudentsTable() : EmptyStudents()}
     </AdminPrivateRoute>
   );
 };

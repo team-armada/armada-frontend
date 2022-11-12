@@ -1,12 +1,8 @@
 import axios from 'axios';
-
-interface ICohortUser {
-  userId: string;
-  cohortId: number;
-}
+import { ICohort, ICourse, IUser, IUser_Cohort } from '../utils/types';
 
 //Create a cohort
-export const createCohort = async (name: string) => {
+export const createCohort = async (name: string): Promise<ICohort> => {
   const data = {
     data: {
       name,
@@ -18,26 +14,28 @@ export const createCohort = async (name: string) => {
 };
 
 // Retrieve all cohorts
-export const getAllCohorts = async (): Promise<string[]> => {
+export const getAllCohorts = async (): Promise<ICohort[]> => {
   const response = await axios.get(`/cohort/all`);
   return response.data.result;
 };
 
 // Retrieve all users for a given cohort.
-export const getAllStudentsInCohort = async (id: number): Promise<string[]> => {
+export const getAllStudentsInCohort = async (id: number): Promise<IUser[]> => {
   const response = await axios.get(`/user/allStudentsInCohort/${id}`);
 
   return response.data.result;
 };
 
 // Retrieve all courses for a given cohort.
-export const getAllCoursesForCohort = async (id: number): Promise<string[]> => {
+export const getAllCoursesForCohort = async (
+  id: number
+): Promise<{ cohort: ICohort; courses: ICourse[] }> => {
   const response = await axios.get(`/cohort/${id}`);
   return response.data.result;
 };
 
 // Add Users to cohort.
-export const addUsersToCohort = async (relationshipArray: ICohortUser[]) => {
+export const addUsersToCohort = async (relationshipArray: IUser_Cohort[]) => {
   const data = {
     data: relationshipArray,
   };
@@ -47,13 +45,16 @@ export const addUsersToCohort = async (relationshipArray: ICohortUser[]) => {
 };
 
 // Delete Cohort
-export const deleteCohort = async (cohortId: number) => {
+export const deleteCohort = async (cohortId: number): Promise<ICohort> => {
   const response = await axios.delete(`/cohort/${cohortId}`);
   return response.data.result;
 };
 
 // Update Cohort
-export const updateCohort = async (cohortId: number, name: string) => {
+export const updateCohort = async (
+  cohortId: number,
+  name: string
+): Promise<ICohort> => {
   const data = {
     data: {
       name,

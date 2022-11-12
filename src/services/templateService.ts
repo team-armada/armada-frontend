@@ -1,45 +1,15 @@
+import {
+  DeregisterTaskDefinitionCommandOutput,
+  ListTaskDefinitionsCommandOutput,
+  RegisterTaskDefinitionCommandOutput,
+} from '@aws-sdk/client-ecs';
 import axios from 'axios';
-
-export interface PortSettings {
-  containerPort: number;
-  hostPort: number;
-  protocol: string;
-}
-
-export interface IContainerSettings {
-  name: string;
-  image: string;
-  memory: number;
-  portMappings: PortSettings[];
-  mountPoints: IMountSettings[];
-}
-
-export interface IMountSettings {
-  containerPath: string;
-  sourceVolume: string;
-}
-
-export interface IContainerDefinition {
-  containerDefinition: IContainerSettings[];
-  family?: string;
-  volumes?: IVolumes[];
-  template?: string;
-}
-export interface IVolumes {
-  efsVolumeConfiguration: {
-    fileSystemId: string;
-    rootDirectory: string;
-  };
-  name: string;
-}
-
-export interface IBaseTemplate {
-  definition: IContainerDefinition;
-  name: string;
-}
+import { IBaseTemplate, IContainerSettings } from '../utils/types';
 
 // Get base templates.
-export const getBaseTemplates = async () => {
+export const getBaseTemplates = async (): Promise<
+  IBaseTemplate[] | undefined
+> => {
   try {
     const response = await axios.get(`/template/base`);
     return response.data.baseTemplates;
@@ -51,7 +21,9 @@ export const getBaseTemplates = async () => {
 };
 
 // Retrieve all templates
-export const getWorkspaceTemplates = async () => {
+export const getWorkspaceTemplates = async (): Promise<
+  ListTaskDefinitionsCommandOutput | undefined
+> => {
   try {
     const response = await axios.get(`/template`);
     return response.data;
@@ -66,7 +38,7 @@ export const getWorkspaceTemplates = async () => {
 export const createWorkspaceTemplate = async (
   containerDefinition: IContainerSettings[],
   family: string
-) => {
+): Promise<RegisterTaskDefinitionCommandOutput | undefined> => {
   try {
     const response = await axios.post(`/template`, {
       data: {
@@ -83,7 +55,9 @@ export const createWorkspaceTemplate = async (
 };
 
 // Delete a template
-export const deleteWorkspaceTemplate = async (taskDefinitionArn: string) => {
+export const deleteWorkspaceTemplate = async (
+  taskDefinitionArn: string
+): Promise<DeregisterTaskDefinitionCommandOutput | undefined> => {
   try {
     const response = await axios.delete(`/template`, {
       data: {

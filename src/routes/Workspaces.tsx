@@ -45,25 +45,27 @@ import { useEffect, useState } from 'react';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 
 import AdminPrivateRoute from '../components/PrivateRoutes/AdminPrivateRoute';
-import { ICohort } from './Cohorts';
 import {
   getAllCohorts,
   getAllCoursesForCohort,
 } from '../services/cohortService';
 import { getCourseStudentsWithoutWorkspaces } from '../services/userService';
 import { makeLowerCase } from '../utils/stringManipulation';
+import { ICohort, ICourse, IUser, IWorkspace } from '../utils/types';
 
-const AllWorkspaces = () => {
-  const workspaces = useLoaderData();
+const Workspaces = () => {
+  const workspaces = useLoaderData() as (IWorkspace & {
+    user: IUser;
+    Course: ICourse & {
+      cohort: ICohort;
+    };
+  })[];
   const navigate = useNavigate();
-  const [filteredData, setFilteredData] = useState<ICohort[]>(workspaces);
-  const [filter, setFilter] = useState<string>('student-asc');
-  const [search, setSearch] = useState('');
-  const [cohorts, setCohorts] = useState([]);
-  const [courses, setCourses] = useState([]);
-  const [students, setStudents] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState(0);
-  const [selectedCohort, setSelectedCohort] = useState(0);
+  const [cohorts, setCohorts] = useState<ICohort[]>([]);
+  const [courses, setCourses] = useState<ICourse[]>([]);
+  const [students, setStudents] = useState<IUser[]>([]);
+  const [selectedCourse, setSelectedCourse] = useState<number>(0);
+  const [selectedCohort, setSelectedCohort] = useState<number>(0);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
@@ -75,7 +77,7 @@ const AllWorkspaces = () => {
     populateCohorts();
   }, []);
 
-  function CustomCheckbox(props) {
+  function CustomCheckbox(props: any) {
     const { state, getCheckboxProps, getInputProps, getLabelProps, htmlProps } =
       useCheckbox(props);
 
@@ -119,17 +121,21 @@ const AllWorkspaces = () => {
   });
 
   const handleCreateWorkspaces = async (students: string[]) => {
-    const cohortName = cohorts.find(
+    const cohortName = cohorts.filter(
       cohort => cohort.id === Number(selectedCohort)
-    ).name;
-    const courseName = courses.find(
+    )[0].name;
+
+    const courseName = courses.filter(
       course => course.id === Number(selectedCourse)
-    ).name;
+    )[0].name;
 
     const lowerCohort = makeLowerCase(cohortName);
     const lowerCourse = makeLowerCase(courseName);
     const lowercaseStudents = students.map(student => {
-      const result = {};
+      const result: {
+        username: string;
+        uuid: string;
+      } = { username: '', uuid: '' };
       const studentValues = student.split('_');
       const username = studentValues[0];
       result.username = makeLowerCase(username);
@@ -163,7 +169,7 @@ const AllWorkspaces = () => {
     handlePopulateCourses(cohortId);
   };
 
-  const handlePopulateStudents = async courseId => {
+  const handlePopulateStudents = async (courseId: number) => {
     const students = await getCourseStudentsWithoutWorkspaces(courseId);
     setStudents(students);
   };
@@ -172,100 +178,6 @@ const AllWorkspaces = () => {
     setSelectedCourse(courseId);
     handlePopulateStudents(courseId);
   };
-
-  function updateData(filter: string) {
-    if (
-      filter !== 'student-asc' &&
-      filter !== 'cohort-asc' &&
-      filter !== 'course-asc' &&
-      filter !== 'student-desc' &&
-      filter !== 'cohort-desc' &&
-      filter !== 'course-desc'
-    ) {
-      throw new Error('An invalid selection has been made');
-    }
-
-    const workspaces = filteredData;
-    setFilter(filter);
-    sortBy(workspaces, filter);
-    setFilteredData(workspaces);
-  }
-
-  function filterBy(searchText: string) {
-    searchText = searchText.toLowerCase();
-
-    const searchResults = workspaces.filter(workspace => {
-      return (
-        workspace.cohort.toLowerCase().startsWith(searchText) ||
-        workspace.student.toLowerCase().startsWith(searchText) ||
-        workspace.course.toLowerCase().startsWith(searchText)
-      );
-    });
-
-    if (searchText === '') {
-      sortBy(workspaces, filter);
-      setFilteredData(workspaces);
-    } else {
-      sortBy(searchResults, filter);
-      setFilteredData(searchResults);
-    }
-  }
-
-  useEffect(() => {
-    updateData(filter);
-  }, []);
-
-  function sortBy(
-    data: ICohort[],
-    filter:
-      | 'student-asc'
-      | 'cohort-asc'
-      | 'course-asc'
-      | 'student-desc'
-      | 'cohort-desc'
-      | 'course-desc'
-  ) {
-    let options = filter.split('-');
-
-    if (options.length !== 2) {
-      throw new Error('Something went wrong.');
-    }
-
-    const property = options[0];
-    const direction = options[1];
-
-    if (
-      property !== 'student' &&
-      property !== 'cohort' &&
-      property !== 'course'
-    ) {
-      throw new Error('Invalid selection made.');
-    }
-
-    if (direction !== 'asc' && direction !== 'desc') {
-      throw new Error('Invalid direction provided.');
-    }
-
-    data.sort((a, b) => {
-      if (options[1] === 'asc') {
-        if (a[property] > b[property]) {
-          return 1;
-        } else if (b[property] > a[property]) {
-          return -1;
-        } else {
-          return 0;
-        }
-      } else {
-        if (a[property] > b[property]) {
-          return -1;
-        } else if (b[property] > a[property]) {
-          return 1;
-        } else {
-          return 0;
-        }
-      }
-    });
-  }
 
   const start = async (name: string) => {
     await startService(name);
@@ -289,30 +201,6 @@ const AllWorkspaces = () => {
   const WorkspaceTable = () => {
     return (
       <>
-        <Flex justifyContent={'right'} mb={'20px'}>
-          <Select
-            mr={'10px'}
-            onChange={e => updateData(e.target.value)}
-            w={'20%'}
-            placeholder={'Click here to sort...'}
-          >
-            <option value="student-asc" defaultValue={'student-asc'}>
-              Sort: Student Name (ASC)
-            </option>
-            <option value="student-desc">Sort: Student Name (DESC)</option>
-            <option value="course-asc">Sort: Course (ASC)</option>
-            <option value="course-desc">Sort: Course (DESC)</option>
-            <option value="cohort-asc">Sort: Cohort (ASC)</option>
-            <option value="cohort-desc">Sort: Cohort (DESC)</option>
-          </Select>
-          <Input
-            onChange={e => filterBy(e.target.value)}
-            mr={'20px'}
-            w={'20%'}
-            placeholder="Search here..."
-          />
-        </Flex>
-
         <TableContainer>
           <Table>
             <Thead>
@@ -420,7 +308,7 @@ const AllWorkspaces = () => {
             <FormControl>
               <FormLabel>Cohort</FormLabel>
               <Select
-                onChange={e => handleSelectCohort(e.target.value)}
+                onChange={e => handleSelectCohort(Number(e.target.value))}
                 placeholder="Select cohort"
               >
                 {cohorts.map(cohort => (
@@ -431,7 +319,7 @@ const AllWorkspaces = () => {
               </Select>
               <FormLabel>Course</FormLabel>
               <Select
-                onChange={e => handleSelectCourse(e.target.value)}
+                onChange={e => handleSelectCourse(Number(e.target.value))}
                 placeholder="Select course"
               >
                 {courses.map(course => (
@@ -449,7 +337,7 @@ const AllWorkspaces = () => {
 
           <ModalFooter>
             <Button
-              onClick={() => handleCreateWorkspaces(value)}
+              onClick={() => handleCreateWorkspaces(value as string[])}
               colorScheme="blue"
               mr={3}
               disabled={students.length === 0}
@@ -464,4 +352,4 @@ const AllWorkspaces = () => {
   );
 };
 
-export default AllWorkspaces;
+export default Workspaces;

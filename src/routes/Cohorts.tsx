@@ -21,11 +21,7 @@ import {
   useDisclosure,
   FormControl,
   FormLabel,
-  FormErrorMessage,
-  FormHelperText,
   Input,
-  Checkbox,
-  CheckboxGroup,
   Stack,
   useCheckbox,
   Flex,
@@ -43,16 +39,15 @@ import {
   updateCohort,
 } from '../services/cohortService';
 import { getStudentsNotInCohort } from '../services/userService';
+import { ICohort, IUser } from '../utils/types';
 
-export interface ICohort {
-  cohort: string;
-  course: string;
-  student: string;
-  desiredCount?: number;
-  name?: string;
-}
-
-const CreateCohortModal = ({ setCohortName, cohortName }) => {
+const CreateCohortModal = ({
+  setCohortName,
+  cohortName,
+}: {
+  cohortName: string;
+  setCohortName: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -103,10 +98,9 @@ const CreateCohortModal = ({ setCohortName, cohortName }) => {
   );
 };
 
-const AddStudentsModal = ({ cohortId }) => {
+const AddStudentsModal = ({ cohortId }: { cohortId: number }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [students, setStudents] = useState([]);
-  // const { getLabelProps } = useCheckbox(props);
+  const [students, setStudents] = useState<IUser[]>([]);
 
   const populateStudents = async () => {
     const populatedStudents = await getStudentsNotInCohort(cohortId);
@@ -114,7 +108,7 @@ const AddStudentsModal = ({ cohortId }) => {
     onOpen();
   };
 
-  function CustomCheckbox(props) {
+  function CustomCheckbox(props: any) {
     const { state, getCheckboxProps, getInputProps, getLabelProps, htmlProps } =
       useCheckbox(props);
 
@@ -220,7 +214,7 @@ const AddStudentsModal = ({ cohortId }) => {
 
           <ModalFooter>
             <Button
-              onClick={() => handleAddStudents(cohortId, value)}
+              onClick={() => handleAddStudents(cohortId, value as string[])}
               colorScheme="blue"
               mr={3}
               disabled={students.length === 0}
@@ -234,8 +228,13 @@ const AddStudentsModal = ({ cohortId }) => {
   );
 };
 
-// TODO: Add Update Cohort Functionality.
-const UpdateCohortModal = ({ cohortId, cohortName }) => {
+const UpdateCohortModal = ({
+  cohortId,
+  cohortName,
+}: {
+  cohortId: number;
+  cohortName: string;
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
   const [newName, setNewName] = useState('');
@@ -285,7 +284,13 @@ const UpdateCohortModal = ({ cohortId, cohortName }) => {
   );
 };
 
-const DeleteCohortModal = ({ cohortId, cohortName }) => {
+const DeleteCohortModal = ({
+  cohortId,
+  cohortName,
+}: {
+  cohortId: number;
+  cohortName: string;
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
 
@@ -331,13 +336,9 @@ const DeleteCohortModal = ({ cohortId, cohortName }) => {
 };
 
 const Cohorts = () => {
-  const [cohortName, setCohortName] = useState('');
+  const [cohortName, setCohortName] = useState<string>('');
   const navigate = useNavigate();
-  let cohorts = useLoaderData();
-  // const { isOpen, onOpen, onClose } = useDisclosure();
-
-  // TODO: Migrate modals to their own components.
-  // You may have to create a new state to control the currently selected cohort to use the endpoint at getStudentsNotInCohort
+  let cohorts = useLoaderData() as ICohort[];
 
   const CohortTable = () => {
     return (

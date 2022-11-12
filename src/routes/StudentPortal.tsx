@@ -14,14 +14,34 @@ import {
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import StudentPrivateRoute from '../components/PrivateRoutes/StudentPrivateRoute';
 import { startService } from '../services/studentService';
+import {
+  IUser,
+  IUser_Cohort,
+  ICourse,
+  ICohort,
+  IWorkspace,
+  IUser_Course,
+} from '../utils/types';
 
 const StudentPortal = () => {
-  let data = useLoaderData();
+  let data = useLoaderData() as IUser & {
+    user_cohort: (IUser_Cohort & {
+      cohort: ICohort;
+    })[];
+    user_course: (IUser_Course & {
+      course: ICourse & {
+        cohort: ICohort;
+      };
+    })[];
+    workspaces: (IWorkspace & {
+      Course: ICourse & {
+        cohort: ICohort;
+      };
+    })[];
+  };
   const navigate = useNavigate();
 
   const workspaces = data.workspaces;
-
-  // TODO: Implement on-click for workspace connect button.
 
   const start = async (name: string) => {
     await startService(name);

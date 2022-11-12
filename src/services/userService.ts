@@ -1,47 +1,24 @@
 import axios from 'axios';
-
-export interface IStudent {
-  user: {
-    uuid: string;
-    username: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    isAdmin: boolean;
-    user_cohort?: IUser_Cohort[];
-    user_course?: IUser_Course[];
-  };
-}
-
-export interface IUser_Cohort {
-  userId: string;
-  cohortId: number;
-}
-
-export interface IUser_Course {
-  userId: string;
-  courseId: number;
-}
-
-export interface ICohort {
-  id: number;
-  name: string;
-}
-
-export interface ICourses {
-  id: number;
-  name: string;
-  cohortId: number;
-}
-
-export interface ISpecificStudent {
-  user: IStudent['user'];
-  cohorts: ICohort[];
-  courses: ICourses[];
-}
+import {
+  ICohort,
+  ICourse,
+  IUser,
+  IUser_Cohort,
+  IUser_Course,
+  IWorkspace,
+} from '../utils/types';
 
 // Retrieve all students
-export const getAllStudents = async (): Promise<IStudent[]> => {
+export const getAllStudents = async (): Promise<
+  (IUser & {
+    user_cohort: (IUser_Cohort & {
+      cohort: ICohort;
+    })[];
+    user_course: (IUser_Course & {
+      course: ICourse;
+    })[];
+  })[]
+> => {
   const response = await axios.get(`/user/allStudents`);
   return response.data.result;
 };
@@ -49,7 +26,23 @@ export const getAllStudents = async (): Promise<IStudent[]> => {
 // Retrieve specific user details
 export const getSpecificStudent = async (
   username: string
-): Promise<ISpecificStudent> => {
+): Promise<
+  | IUser & {
+      user_cohort: (IUser_Cohort & {
+        cohort: ICohort;
+      })[];
+      user_course: (IUser_Course & {
+        course: ICourse & {
+          cohort: ICohort;
+        };
+      })[];
+      workspaces: (IWorkspace & {
+        course: ICourse & {
+          cohort: ICohort;
+        };
+      })[];
+    }
+> => {
   const response = await axios.get(`/user/${username}`);
   return response.data.result;
 };
@@ -57,7 +50,7 @@ export const getSpecificStudent = async (
 // Retrieve specific user details
 export const getStudentsNotInCohort = async (
   cohortId: number
-): Promise<ISpecificStudent> => {
+): Promise<IUser[]> => {
   const response = await axios.get(`/user/allStudentsNotInCohort/${cohortId}`);
 
   return response.data.result;
@@ -67,7 +60,7 @@ export const getStudentsNotInCohort = async (
 export const getStudentsInCohortNotInCourse = async (
   cohortId: number,
   courseId: number
-) => {
+): Promise<IUser[]> => {
   const response = await axios.get(
     `/user/allStudentsNotInCourse/${cohortId}/${courseId}`
   );
@@ -81,7 +74,7 @@ export const createStudent = async (
   firstName: string,
   lastName: string,
   email: string
-) => {
+): Promise<IUser> => {
   const data = {
     data: {
       username,
@@ -101,7 +94,7 @@ export const createStudent = async (
 
 export const getCourseStudentsWithoutWorkspaces = async (
   courseId: number
-): Promise<ISpecificStudent> => {
+): Promise<IUser[]> => {
   const response = await axios.get(
     `/user/allStudentsWithoutWorkspaces/${courseId}`
   );
@@ -110,7 +103,7 @@ export const getCourseStudentsWithoutWorkspaces = async (
 };
 
 //Delete a user
-export const deleteStudent = async (uuid: number) => {
+export const deleteStudent = async (uuid: string): Promise<IUser[]> => {
   const response = await axios.delete(`/user/delete/${uuid}`);
   return response.data.result;
 };

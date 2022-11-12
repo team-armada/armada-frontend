@@ -33,16 +33,27 @@ import {
 } from '@chakra-ui/react';
 
 import AdminPrivateRoute from '../components/PrivateRoutes/AdminPrivateRoute';
+import {
+  ICohort,
+  ICourse,
+  IUser,
+  IUser_Cohort,
+  IUser_Course,
+} from '../utils/types';
 
 const DeleteStudentModal = ({
   studentId,
   studentUsername,
   studentFullName,
+}: {
+  studentId: string;
+  studentUsername: string;
+  studentFullName: string;
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
 
-  const handleDeleteStudent = async (studentId: number) => {
+  const handleDeleteStudent = async (studentId: string) => {
     const response = await deleteStudent(studentId);
 
     onClose();
@@ -85,7 +96,14 @@ const DeleteStudentModal = ({
 };
 
 const Students = () => {
-  const students = useLoaderData();
+  const students = useLoaderData() as (IUser & {
+    user_cohort: (IUser_Cohort & {
+      cohort: ICohort;
+    })[];
+    user_course: (IUser_Course & {
+      course: ICourse;
+    })[];
+  })[];
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [username, setUsername] = useState('');
