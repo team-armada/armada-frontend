@@ -8,7 +8,7 @@ export const getAllCourses = async (): Promise<{
   })[];
   cohorts: ICohort[];
 }> => {
-  const response = await axios.get(`/course/all`);
+  const response = await axios.get(`/api/course/all`);
   return response.data.result;
 };
 
@@ -21,7 +21,7 @@ export const getAllStudentsForCourse = async (
     user: IUser;
   })[];
 }> => {
-  const response = await axios.get(`/course/${id}`);
+  const response = await axios.get(`/api/course/${id}`);
   return response.data.result;
 };
 
@@ -36,7 +36,7 @@ export const createCourse = async (
       cohortId,
     },
   };
-  const response = await axios.post(`/course/create`, data);
+  const response = await axios.post(`/api/course/create`, data);
   return response.data.result;
 };
 
@@ -45,13 +45,13 @@ export const addCohortToCourse = async (cohortStudents: IUser_Course[]) => {
   const data = {
     data: cohortStudents,
   };
-  const response = await axios.post(`/user/addUsersToCourse`, data);
+  const response = await axios.post(`/api/user/addUsersToCourse`, data);
   return response.data.result;
 };
 
 // Delete Course
 export const deleteCourse = async (courseId: number): Promise<ICourse> => {
-  const response = await axios.delete(`/course/${courseId}`);
+  const response = await axios.delete(`/api/course/${courseId}`);
   return response.data.result;
 };
 
@@ -67,7 +67,7 @@ export const updateCourse = async (
     },
   };
 
-  const response = await axios.put(`/course/${courseId}`, data);
+  const response = await axios.put(`/api/course/${courseId}`, data);
   return response.data.result;
 };
 
@@ -77,6 +77,6 @@ export const addUsersToCourse = async (relationshipArray: IUser_Course[]) => {
     data: relationshipArray,
   };
 
-  const response = await axios.post(`/user/addUsersToCourse`, data);
+  const response = await axios.post(`/api/user/addUsersToCourse`, data);
   return response.data.result;
 };

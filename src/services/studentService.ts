@@ -48,7 +48,7 @@ export const getAllServices = async (): Promise<
   | undefined
 > => {
   try {
-    const response = await axios.get(`/service/all`);
+    const response = await axios.get(`/api/service/all`);
     return response.data.result;
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -61,7 +61,7 @@ export const describeService = async (
   service: string
 ): Promise<number | undefined> => {
   try {
-    const response = await axios.get(`/service/${service}`);
+    const response = await axios.get(`/api/service/${service}`);
     return response.data.result.services[0].desiredCount;
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -82,7 +82,7 @@ export const createStudentService = async (
   courseId: number
 ): Promise<CreateServiceCommandOutput | undefined> => {
   try {
-    const response = await axios.post(`/service/create`, {
+    const response = await axios.post(`/api/service/create`, {
       data: {
         studentNames: studentValues,
         cohort,
@@ -106,7 +106,7 @@ export const deleteService = async (
   try {
     // update service
     //stop any running tasks
-    const response = await axios.delete(`/service`, {
+    const response = await axios.delete(`/api/service`, {
       data: {
         service,
       },
@@ -125,7 +125,7 @@ export const startService = async (
   service: string
 ): Promise<UpdateServiceCommandOutput | undefined> => {
   try {
-    const response = await axios.put(`/service/start`, {
+    const response = await axios.put(`/api/service/start`, {
       data: {
         service,
       },
@@ -144,7 +144,7 @@ export const stopService = async (
   service: string
 ): Promise<UpdateServiceCommandOutput | undefined> => {
   try {
-    const response = await axios.put(`/service/stop`, {
+    const response = await axios.put(`/api/service/stop`, {
       data: {
         service,
       },

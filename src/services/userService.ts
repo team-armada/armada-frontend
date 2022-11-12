@@ -19,7 +19,7 @@ export const getAllStudents = async (): Promise<
     })[];
   })[]
 > => {
-  const response = await axios.get(`/user/allStudents`);
+  const response = await axios.get(`/api/user/allStudents`);
   return response.data.result;
 };
 
@@ -43,7 +43,7 @@ export const getSpecificStudent = async (
       })[];
     }
 > => {
-  const response = await axios.get(`/user/${username}`);
+  const response = await axios.get(`/api/user/${username}`);
   return response.data.result;
 };
 
@@ -51,7 +51,9 @@ export const getSpecificStudent = async (
 export const getStudentsNotInCohort = async (
   cohortId: number
 ): Promise<IUser[]> => {
-  const response = await axios.get(`/user/allStudentsNotInCohort/${cohortId}`);
+  const response = await axios.get(
+    `/api/user/allStudentsNotInCohort/${cohortId}`
+  );
 
   return response.data.result;
 };
@@ -62,7 +64,7 @@ export const getStudentsInCohortNotInCourse = async (
   courseId: number
 ): Promise<IUser[]> => {
   const response = await axios.get(
-    `/user/allStudentsNotInCourse/${cohortId}/${courseId}`
+    `/api/user/allStudentsNotInCourse/${cohortId}/${courseId}`
   );
 
   return response.data.result;
@@ -85,7 +87,7 @@ export const createStudent = async (
     },
   };
 
-  const response = await axios.post(`/user/create`, data);
+  const response = await axios.post(`/api/user/create`, data);
   return response.data.result;
 };
 
@@ -96,7 +98,7 @@ export const getCourseStudentsWithoutWorkspaces = async (
   courseId: number
 ): Promise<IUser[]> => {
   const response = await axios.get(
-    `/user/allStudentsWithoutWorkspaces/${courseId}`
+    `/api/user/allStudentsWithoutWorkspaces/${courseId}`
   );
 
   return response.data.result;
@@ -104,6 +106,6 @@ export const getCourseStudentsWithoutWorkspaces = async (
 
 //Delete a user
 export const deleteStudent = async (uuid: string): Promise<IUser[]> => {
-  const response = await axios.delete(`/user/delete/${uuid}`);
+  const response = await axios.delete(`/api/user/delete/${uuid}`);
   return response.data.result;
 };

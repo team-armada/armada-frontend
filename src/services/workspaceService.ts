@@ -10,6 +10,6 @@ export const getAllWorkspaces = async (): Promise<
     user: IUser;
   })[]
 > => {
-  const response = await axios.get(`/service/all`);
+  const response = await axios.get(`/api/service/all`);
   return response.data;
 };

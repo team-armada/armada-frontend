@@ -11,7 +11,7 @@ export const getBaseTemplates = async (): Promise<
   IBaseTemplate[] | undefined
 > => {
   try {
-    const response = await axios.get(`/template/base`);
+    const response = await axios.get(`/api/template/base`);
     return response.data.baseTemplates;
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -25,7 +25,7 @@ export const getWorkspaceTemplates = async (): Promise<
   ListTaskDefinitionsCommandOutput | undefined
 > => {
   try {
-    const response = await axios.get(`/template`);
+    const response = await axios.get(`/api/template`);
     return response.data;
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -40,7 +40,7 @@ export const createWorkspaceTemplate = async (
   family: string
 ): Promise<RegisterTaskDefinitionCommandOutput | undefined> => {
   try {
-    const response = await axios.post(`/template`, {
+    const response = await axios.post(`/api/template`, {
       data: {
         containerDefinition,
         family,
@@ -59,7 +59,7 @@ export const deleteWorkspaceTemplate = async (
   taskDefinitionArn: string
 ): Promise<DeregisterTaskDefinitionCommandOutput | undefined> => {
   try {
-    const response = await axios.delete(`/template`, {
+    const response = await axios.delete(`/api/template`, {
       data: {
         taskDefinitionArn,
       },
