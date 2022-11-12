@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { BASE_URL } from '../utils/constants';
 
 export interface IStudent {
   user: {
@@ -43,7 +42,7 @@ export interface ISpecificStudent {
 
 // Retrieve all students
 export const getAllStudents = async (): Promise<IStudent[]> => {
-  const response = await axios.get(`${BASE_URL}/user/allStudents`);
+  const response = await axios.get(`/user/allStudents`);
   return response.data.result;
 };
 
@@ -51,7 +50,7 @@ export const getAllStudents = async (): Promise<IStudent[]> => {
 export const getSpecificStudent = async (
   username: string
 ): Promise<ISpecificStudent> => {
-  const response = await axios.get(`${BASE_URL}/user/${username}`);
+  const response = await axios.get(`/user/${username}`);
   return response.data.result;
 };
 
@@ -59,9 +58,7 @@ export const getSpecificStudent = async (
 export const getStudentsNotInCohort = async (
   cohortId: number
 ): Promise<ISpecificStudent> => {
-  const response = await axios.get(
-    `${BASE_URL}/user/allStudentsNotInCohort/${cohortId}`
-  );
+  const response = await axios.get(`/user/allStudentsNotInCohort/${cohortId}`);
 
   return response.data.result;
 };
@@ -72,7 +69,7 @@ export const getStudentsInCohortNotInCourse = async (
   courseId: number
 ) => {
   const response = await axios.get(
-    `${BASE_URL}/user/allStudentsNotInCourse/${cohortId}/${courseId}`
+    `/user/allStudentsNotInCourse/${cohortId}/${courseId}`
   );
 
   return response.data.result;
@@ -95,7 +92,7 @@ export const createStudent = async (
     },
   };
 
-  const response = await axios.post(`${BASE_URL}/user/create`, data);
+  const response = await axios.post(`/user/create`, data);
   return response.data.result;
 };
 
@@ -106,7 +103,7 @@ export const getCourseStudentsWithoutWorkspaces = async (
   courseId: number
 ): Promise<ISpecificStudent> => {
   const response = await axios.get(
-    `${BASE_URL}/user/allStudentsWithoutWorkspaces/${courseId}`
+    `/user/allStudentsWithoutWorkspaces/${courseId}`
   );
 
   return response.data.result;
@@ -114,6 +111,6 @@ export const getCourseStudentsWithoutWorkspaces = async (
 
 //Delete a user
 export const deleteStudent = async (uuid: number) => {
-  const response = await axios.delete(`${BASE_URL}/user/delete/${uuid}`);
+  const response = await axios.delete(`/user/delete/${uuid}`);
   return response.data.result;
 };

@@ -21,7 +21,6 @@ import Student from './routes/Student';
 import Students from './routes/Students';
 import AllWorkspaces from './routes/Workspaces';
 import Login from './routes/Login';
-import NewWorkspace from './routes/NewWorkspace';
 import StudentPortal from './routes/StudentPortal';
 import { getAllStudents, getSpecificStudent } from './services/userService';
 import {

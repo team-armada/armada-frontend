@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { BASE_URL } from '../utils/constants';
 
 export interface PortSettings {
   containerPort: number;
@@ -42,7 +41,7 @@ export interface IBaseTemplate {
 // Get base templates.
 export const getBaseTemplates = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/template/base`);
+    const response = await axios.get(`/template/base`);
     return response.data.baseTemplates;
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -54,7 +53,7 @@ export const getBaseTemplates = async () => {
 // Retrieve all templates
 export const getWorkspaceTemplates = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/template`);
+    const response = await axios.get(`/template`);
     return response.data;
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -69,7 +68,7 @@ export const createWorkspaceTemplate = async (
   family: string
 ) => {
   try {
-    const response = await axios.post(`${BASE_URL}/template`, {
+    const response = await axios.post(`/template`, {
       data: {
         containerDefinition,
         family,
@@ -86,7 +85,7 @@ export const createWorkspaceTemplate = async (
 // Delete a template
 export const deleteWorkspaceTemplate = async (taskDefinitionArn: string) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/template`, {
+    const response = await axios.delete(`/template`, {
       data: {
         taskDefinitionArn,
       },

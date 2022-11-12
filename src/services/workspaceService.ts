@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { BASE_URL } from '../utils/constants';
 
 export interface IResponse {
   message: string;
@@ -16,13 +15,13 @@ export interface IResponse {
 
 // Retrieve all workspaces
 export const getAllWorkspaces = async (): Promise<string[]> => {
-  const response = await axios.get(`${BASE_URL}/service/all`);
+  const response = await axios.get(`/service/all`);
   return response.data;
 };
 
 // Run a Workspace
 export const runWorkspace = async (taskDefinitionArn: string) => {
-  const response = await axios.post(`${BASE_URL}/workspace`, {
+  const response = await axios.post(`/workspace`, {
     data: {
       taskDefinitionArn,
     },
@@ -35,7 +34,7 @@ export const stopWorkspace = async (
   workspaceArn: string,
   reason: string = 'SESSION_ENDED'
 ) => {
-  const response = await axios.put(`${BASE_URL}/workspace`, {
+  const response = await axios.put(`/workspace`, {
     data: {
       taskID: workspaceArn,
       reason,

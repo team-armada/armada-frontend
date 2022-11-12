@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { BASE_URL } from '../utils/constants';
 
 interface ICohortUser {
   userId: string;
@@ -14,28 +13,26 @@ export const createCohort = async (name: string) => {
     },
   };
 
-  const response = await axios.post(`${BASE_URL}/cohort/create`, data);
+  const response = await axios.post(`/cohort/create`, data);
   return response.data.result;
 };
 
 // Retrieve all cohorts
 export const getAllCohorts = async (): Promise<string[]> => {
-  const response = await axios.get(`${BASE_URL}/cohort/all`);
+  const response = await axios.get(`/cohort/all`);
   return response.data.result;
 };
 
 // Retrieve all users for a given cohort.
 export const getAllStudentsInCohort = async (id: number): Promise<string[]> => {
-  const response = await axios.get(
-    `${BASE_URL}/user/allStudentsInCohort/${id}`
-  );
+  const response = await axios.get(`/user/allStudentsInCohort/${id}`);
 
   return response.data.result;
 };
 
 // Retrieve all courses for a given cohort.
 export const getAllCoursesForCohort = async (id: number): Promise<string[]> => {
-  const response = await axios.get(`${BASE_URL}/cohort/${id}`);
+  const response = await axios.get(`/cohort/${id}`);
   return response.data.result;
 };
 
@@ -45,13 +42,13 @@ export const addUsersToCohort = async (relationshipArray: ICohortUser[]) => {
     data: relationshipArray,
   };
 
-  const response = await axios.post(`${BASE_URL}/user/addUsersToCohort`, data);
+  const response = await axios.post(`/user/addUsersToCohort`, data);
   return response.data.result;
 };
 
 // Delete Cohort
 export const deleteCohort = async (cohortId: number) => {
-  const response = await axios.delete(`${BASE_URL}/cohort/${cohortId}`);
+  const response = await axios.delete(`/cohort/${cohortId}`);
   return response.data.result;
 };
 
@@ -64,6 +61,6 @@ export const updateCohort = async (cohortId: number, name: string) => {
     },
   };
 
-  const response = await axios.put(`${BASE_URL}/cohort/${cohortId}`, data);
+  const response = await axios.put(`/cohort/${cohortId}`, data);
   return response.data.result;
 };

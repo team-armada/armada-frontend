@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { BASE_URL } from '../utils/constants';
 
 interface ICourseUser {
   courseId: number;
@@ -8,7 +7,7 @@ interface ICourseUser {
 
 // Retrieve All Courses
 export const getAllCourses = async (): Promise<string[]> => {
-  const response = await axios.get(`${BASE_URL}/course/all`);
+  const response = await axios.get(`/course/all`);
   return response.data.result;
 };
 
@@ -16,7 +15,7 @@ export const getAllCourses = async (): Promise<string[]> => {
 export const getAllStudentsForCourse = async (
   id: number
 ): Promise<string[]> => {
-  const response = await axios.get(`${BASE_URL}/course/${id}`);
+  const response = await axios.get(`/course/${id}`);
   return response.data.result;
 };
 
@@ -31,7 +30,7 @@ export const createCourse = async (
       cohortId,
     },
   };
-  const response = await axios.post(`${BASE_URL}/course/create`, data);
+  const response = await axios.post(`/course/create`, data);
   return response.data.result;
 };
 
@@ -42,13 +41,13 @@ export const addCohortToCourse = async (
   const data = {
     data: cohortStudents,
   };
-  const response = await axios.post(`${BASE_URL}/user/addUsersToCourse`, data);
+  const response = await axios.post(`/user/addUsersToCourse`, data);
   return response.data.result;
 };
 
 // Delete Course
 export const deleteCourse = async (courseId: number) => {
-  const response = await axios.delete(`${BASE_URL}/course/${courseId}`);
+  const response = await axios.delete(`/course/${courseId}`);
   return response.data.result;
 };
 
@@ -61,7 +60,7 @@ export const updateCourse = async (courseId: number, name: string) => {
     },
   };
 
-  const response = await axios.put(`${BASE_URL}/course/${courseId}`, data);
+  const response = await axios.put(`/course/${courseId}`, data);
   return response.data.result;
 };
 
@@ -71,6 +70,6 @@ export const addUsersToCourse = async (relationshipArray: ICourseUser[]) => {
     data: relationshipArray,
   };
 
-  const response = await axios.post(`${BASE_URL}/user/addUsersToCourse`, data);
+  const response = await axios.post(`/user/addUsersToCourse`, data);
   return response.data.result;
 };
