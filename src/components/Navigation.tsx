@@ -1,3 +1,5 @@
+import ArmadaLogoURL from '../assets/Logo files/PNGs - SVGs/2x/Asset 2@2x-8.png';
+
 import { Link, useNavigate } from 'react-router-dom';
 import {
   IconButton,
@@ -134,7 +136,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         <Image
           marginTop={'100px'}
           boxSize={'150px'}
-          src="/src/assets/Logo files/PNGs - SVGs/2x/Asset 2@2x-8.png"
+          src={ArmadaLogoURL}
           alt="Armada's Logo -- A Pirate Ship!"
         />
       </Flex>

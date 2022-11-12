@@ -1,3 +1,4 @@
+import ArmadaLogoURL from '../assets/Logo files/PNGs - SVGs/2x/Asset 2@2x-8.png';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
@@ -53,7 +54,7 @@ export default function Login() {
           <Image
             marginTop={'100px'}
             boxSize={'250px'}
-            src="/src/assets/Logo files/PNGs - SVGs/2x/Asset 2@2x-8.png"
+            src={ArmadaLogoURL}
             alt="Armada's Logo -- A Pirate Ship!"
           />
         </Stack>
