@@ -80,7 +80,7 @@ export const createStudentService = async (
   course: string,
   template: string,
   courseId: number
-): Promise<CreateServiceCommandOutput | undefined> => {
+): Promise<CreateServiceCommandOutput | string | undefined> => {
   try {
     const response = await axios.post(`/api/service/create`, {
       data: {
@@ -95,6 +95,7 @@ export const createStudentService = async (
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.log(err.message);
+      return err.message;
     }
   }
 };
