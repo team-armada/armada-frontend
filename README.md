@@ -6,7 +6,7 @@ Armada's user interface is built with [React](https://reactjs.org/),
 
 To get started:
 
-1. Clone the GitHub Repository.
+1. Clone the GitHub repository.
 
 ```bash
 gh repo clone team-armada/armada-frontend
@@ -26,3 +26,9 @@ npm run dev
 ```
 
 4. Navigate to `http://localhost:5173` and get started.
+
+The Vite development server is configured to proxy requests to all endpoints
+beginning with `api` to `http://localhost:3000`.
+
+These settings can be accessed and configured via the `vite.config.ts` file
+contained in the `root` directory.
